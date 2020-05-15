@@ -1,26 +1,48 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import Definitions from "./utils/Definitions";
+import Input from "components/Input";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	return (
+		<div
+			style={{
+				minHeight: "100vh",
+				display: "flex",
+				flexDirection: "column",
+				flex: 1,
+				backgroundColor: Definitions.PRIMARY_COLOR,
+				justifyContent: "center",
+				alignItems: "center",
+			}}
+		>
+			<img
+				src={ require("./assets/logo.png") }
+				style={{
+					width: 200,
+					margin: 20
+				}}
+				alt="logo"
+			/>
+			<form
+				style={{
+					width: 400
+				}}
+			>
+				<Input
+					title="Servidor"
+					style={{ width: "100%" }}
+				/>
+				<Input
+					title="Correo electrónico"
+					style={{ width: "100%" }}
+				/>
+				<Input
+					title="Contraseña"
+					style={{ width: "100%" }}
+				/>
+			</form>
+		</div>
+	);
 }
 
 export default App;

@@ -1,0 +1,7 @@
+export default {
+    PRIMARY_COLOR: "#282c34",
+    SECONDARY_COLOR: "#B8822F",
+    TEXT_COLOR: "#FFFFFF",
+    DEFAULT_MARGIN: 20,
+    DEFAULT_PADDING: 10
+};
