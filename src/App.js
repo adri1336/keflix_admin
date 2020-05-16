@@ -1,6 +1,8 @@
 import React from "react";
 import Definitions from "./utils/Definitions";
 import Input from "components/Input";
+import Checkbox from "components/Checkbox";
+import Button from "components/Button";
 
 function App() {
 	return (
@@ -38,6 +40,14 @@ function App() {
 				/>
 				<Input
 					title="Contraseña"
+					style={{ width: "100%" }}
+				/>
+				<Checkbox
+					title="Recordar credenciales"
+					style={{ width: "100%" }}
+				/>
+				<Button
+					title="Iniciar sesión"
 					style={{ width: "100%" }}
 				/>
 			</form>
