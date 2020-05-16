@@ -32,14 +32,17 @@ function App() {
 			>
 				<Input
 					title="SERVIDOR"
+					type="url"
 					style={{ width: "100%" }}
 				/>
 				<Input
 					title="CORREO ELECTRÓNICO"
+					type="email"
 					style={{ width: "100%" }}
 				/>
 				<Input
 					title="CONTRASEÑA"
+					type="password"
 					style={{ width: "100%" }}
 				/>
 				<Checkbox
