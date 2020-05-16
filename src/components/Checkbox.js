@@ -1,5 +1,5 @@
 import React from "react";
-import Definitions from "utils/Definitions";
+import Definitions, { DEFAULT_SIZES } from "utils/Definitions";
 
 export default class Checkbox extends React.Component {
     render() {
@@ -16,19 +16,22 @@ export default class Checkbox extends React.Component {
                     style={{
                         width: 20,
                         height: 20,
-                        backgroundColor: "rgba(128, 128, 128, 0.3)",
+                        outline: 0
                     }}
                     type="checkbox"
                 />
-                <label
-                    style={{
-                        color: "#b9bbbe",
-                        fontSize: 14,
-                        fontWeight: "bold"
-                    }}
-                >
-                    { this.props.title && this.props.title.toUpperCase() }
-                </label>
+                {
+                    this.props.title &&
+                    <label
+                        style={{
+                            color: Definitions.SECONDARY_TEXT_COLOR,
+                            fontSize: DEFAULT_SIZES.MEDIUM_SIZE,
+                            fontWeight: "bold"
+                        }}
+                    >
+                        { this.props.title }
+                    </label>
+                }
             </div>
         );
     }

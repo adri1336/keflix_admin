@@ -1,5 +1,5 @@
 import React from "react";
-import Definitions from "utils/Definitions";
+import Definitions, { DEFAULT_SIZES } from "utils/Definitions";
 
 export default class Input extends React.Component {
     constructor(props) {
@@ -10,7 +10,6 @@ export default class Input extends React.Component {
     }
 
     render() {
-        
         return (
             <div
                 style={{
@@ -18,25 +17,26 @@ export default class Input extends React.Component {
                     margin: Definitions.DEFAULT_MARGIN
                 }}
             >
-                <label
-                    style={{
-                        color: "#b9bbbe",
-                        fontSize: 14,
-                        fontWeight: "bold"
-                    }}
-                >
-                    { this.props.title && this.props.title.toUpperCase() }
-                </label>
+                {
+                    this.props.title &&
+                    <label
+                        style={{
+                            color: Definitions.SECONDARY_TEXT_COLOR,
+                            fontSize: DEFAULT_SIZES.MEDIUM_SIZE,
+                            fontWeight: "bold"
+                        }}
+                    >
+                        { this.props.title }
+                    </label>
+                }
                 <input
                     style={{
                         ...this.props.style,
-                        backgroundColor: "rgba(128, 128, 128, 0.3)",
+                        backgroundColor: Definitions.COMPONENT_BG_COLOR,
                         padding: Definitions.DEFAULT_PADDING,
-                        transition: "0.5s",
                         outline: "none",
-                        boxSizing: "border-box",
                         border: "1px solid",
-                        borderColor: this.state.focused ? Definitions.SECONDARY_COLOR : "#242424",
+                        borderColor: this.state.focused ? Definitions.SECONDARY_COLOR : Definitions.COMPONENT_BORDER_COLOR,
                         color: Definitions.TEXT_COLOR,
                         borderRadius: 2,
                         marginTop: 2

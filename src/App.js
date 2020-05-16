@@ -31,23 +31,23 @@ function App() {
 				}}
 			>
 				<Input
-					title="Servidor"
+					title="SERVIDOR"
 					style={{ width: "100%" }}
 				/>
 				<Input
-					title="Correo electrónico"
+					title="CORREO ELECTRÓNICO"
 					style={{ width: "100%" }}
 				/>
 				<Input
-					title="Contraseña"
+					title="CONTRASEÑA"
 					style={{ width: "100%" }}
 				/>
 				<Checkbox
-					title="Recordar credenciales"
+					title="RECORDAR CREDENCIALES"
 					style={{ width: "100%" }}
 				/>
 				<Button
-					title="Iniciar sesión"
+					title="INICIAR SESIÓN"
 					style={{ width: "100%" }}
 				/>
 			</form>
