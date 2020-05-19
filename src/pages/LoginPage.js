@@ -8,6 +8,13 @@ import Button from "components/Button";
 export default () => {
     const { t } = useTranslation();
 
+    const
+        serverInput = React.createRef();
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+    }
+
     return (
         <div
             style={{
@@ -32,19 +39,24 @@ export default () => {
                 style={{
                     width: 400
                 }}
+                onSubmit={ handleSubmit }
             >
                 <Input
+                    ref={ serverInput }
+                    required
                     title={ t("login.server_input").toUpperCase() }
                     type="url"
                     style={{ width: "100%" }}
                 />
                 <Input
                     title={ t("login.email_input").toUpperCase() }
+                    required
                     type="email"
                     style={{ width: "100%" }}
                 />
                 <Input
                     title={ t("login.password_input").toUpperCase() }
+                    required
                     type="password"
                     style={{ width: "100%" }}
                 />
@@ -54,6 +66,7 @@ export default () => {
                 />
                 <Button
                     title={ t("login.login_button").toUpperCase() }
+                    type="submit"
                     style={{ width: "100%" }}
                 />
             </form>

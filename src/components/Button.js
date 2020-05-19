@@ -16,6 +16,8 @@ export default class Input extends React.Component {
                         border: 0,
                         padding: Definitions.DEFAULT_PADDING
                     }}
+                    onClick={ this.props.onClick }
+                    type={ this.props.type || "button" }
                 >
                     <span
                          style={{

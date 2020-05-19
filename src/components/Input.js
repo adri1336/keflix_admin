@@ -5,6 +5,7 @@ export default class Input extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            value: "",
             focused: false
         };
     }
@@ -44,6 +45,9 @@ export default class Input extends React.Component {
                     type={ this.props.type || "text" }
                     onFocus={ () => this.setState({ focused: true }) }
                     onBlur={ () => this.setState({ focused: false }) }
+                    value={ this.state.value }
+                    onChange={ (event) => { this.setState({ value: event.target.value }) } }
+                    required={ this.props.required || false }
                 />
             </div>
         );
