@@ -1,55 +1,51 @@
 import React from "react";
 import Definitions, { DEFAULT_SIZES } from "utils/Definitions";
 
-export default class Input extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            value: "",
-            focused: false
-        };
-    }
+export default (props) => {
+    const [focused, setFocused] = React.useState();
 
-    render() {
-        return (
-            <div
-                style={{
-                    flexDirection: "column",
-                    margin: Definitions.DEFAULT_MARGIN
-                }}
-            >
-                {
-                    this.props.title &&
-                    <label
-                        style={{
-                            color: Definitions.SECONDARY_TEXT_COLOR,
-                            fontSize: DEFAULT_SIZES.MEDIUM_SIZE,
-                            fontWeight: "bold"
-                        }}
-                    >
-                        { this.props.title }
-                    </label>
-                }
-                <input
+    const
+        title = props.title || null,
+        type = props.type || "text";
+    
+    return (
+        <div
+            style={{
+                flexDirection: "column",
+                margin: Definitions.DEFAULT_MARGIN
+            }}
+        >
+            {
+                title &&
+                <label
                     style={{
-                        ...this.props.style,
-                        backgroundColor: Definitions.COMPONENT_BG_COLOR,
-                        padding: Definitions.DEFAULT_PADDING,
-                        outline: "none",
-                        border: "1px solid",
-                        borderColor: this.state.focused ? Definitions.SECONDARY_COLOR : Definitions.COMPONENT_BORDER_COLOR,
-                        color: Definitions.TEXT_COLOR,
-                        borderRadius: 2,
-                        marginTop: 2
+                        color: Definitions.SECONDARY_TEXT_COLOR,
+                        fontSize: DEFAULT_SIZES.MEDIUM_SIZE,
+                        fontWeight: "bold"
                     }}
-                    type={ this.props.type || "text" }
-                    onFocus={ () => this.setState({ focused: true }) }
-                    onBlur={ () => this.setState({ focused: false }) }
-                    value={ this.state.value }
-                    onChange={ (event) => { this.setState({ value: event.target.value }) } }
-                    required={ this.props.required || false }
-                />
-            </div>
-        );
-    }
+                >
+                    { title }
+                </label>
+            }
+            <input
+                style={{
+                    ...props.style,
+                    backgroundColor: Definitions.COMPONENT_BG_COLOR,
+                    padding: Definitions.DEFAULT_PADDING,
+                    outline: "none",
+                    border: "1px solid",
+                    borderColor: focused ? Definitions.SECONDARY_COLOR : Definitions.COMPONENT_BORDER_COLOR,
+                    color: Definitions.TEXT_COLOR,
+                    borderRadius: 2,
+                    marginTop: 2
+                }}
+                type={ type }
+                onFocus={ () => setFocused(true) }
+                onBlur={ () => setFocused(false) }
+                required={ props.required || false }
+                onChange={ props.onChange }
+                value={ props.value }
+            />
+        </div>
+    );
 }

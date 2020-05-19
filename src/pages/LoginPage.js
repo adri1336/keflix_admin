@@ -9,7 +9,9 @@ export default () => {
     const { t } = useTranslation();
 
     const
-        serverInput = React.createRef();
+        [server, setServer] = React.useState(""),
+        [email, setEmail] = React.useState(""),
+        [password, setPassword] = React.useState("");
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -42,23 +44,28 @@ export default () => {
                 onSubmit={ handleSubmit }
             >
                 <Input
-                    ref={ serverInput }
                     required
                     title={ t("login.server_input").toUpperCase() }
                     type="url"
                     style={{ width: "100%" }}
+                    value={ server }
+                    onChange={ (event) => setServer(event.target.value) }
                 />
                 <Input
                     title={ t("login.email_input").toUpperCase() }
                     required
                     type="email"
                     style={{ width: "100%" }}
+                    value={ email }
+                    onChange={ (event) => setEmail(event.target.value) }
                 />
                 <Input
                     title={ t("login.password_input").toUpperCase() }
                     required
                     type="password"
                     style={{ width: "100%" }}
+                    value={ password }
+                    onChange={ (event) => setPassword(event.target.value) }
                 />
                 <Checkbox
                     title={ t("login.remember_checkbox").toUpperCase() }
