@@ -6,32 +6,28 @@ export default class Checkbox extends React.Component {
         return (
             <div
                 style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
                     margin: Definitions.DEFAULT_MARGIN
                 }}
             >
-                <input
+                <label
                     style={{
-                        width: 20,
-                        height: 20,
-                        outline: 0
+                        color: Definitions.SECONDARY_TEXT_COLOR,
+                        fontSize: DEFAULT_SIZES.MEDIUM_SIZE,
+                        fontWeight: "bold",
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center"
                     }}
-                    type="checkbox"
-                />
-                {
-                    this.props.title &&
-                    <label
+                >
+                    <input
                         style={{
-                            color: Definitions.SECONDARY_TEXT_COLOR,
-                            fontSize: DEFAULT_SIZES.MEDIUM_SIZE,
-                            fontWeight: "bold"
+                            width: 20,
+                            height: 20
                         }}
-                    >
-                        { this.props.title }
-                    </label>
-                }
+                        type="checkbox"
+                    />
+                    { this.props.title }
+                </label>
             </div>
         );
     }

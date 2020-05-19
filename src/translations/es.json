@@ -1,0 +1,9 @@
+{
+    "login": {
+        "server_input": "Servidor",
+        "email_input": "Correo electrónico",
+        "password_input": "Contraseña",
+        "remember_checkbox": "Recordar credenciales",
+        "login_button": "Iniciar sesión"
+    }
+}

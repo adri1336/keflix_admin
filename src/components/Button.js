@@ -13,7 +13,6 @@ export default class Input extends React.Component {
                     style={{
                         ...this.props.style,
                         backgroundColor: Definitions.COMPONENT_BG_COLOR,
-                        outline: 0,
                         border: 0,
                         padding: Definitions.DEFAULT_PADDING
                     }}
