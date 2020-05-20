@@ -1,5 +1,5 @@
 import React from "react";
-import "./i18n";
+import "translations/i18n";
 import {
 	BrowserRouter,
 	Switch,

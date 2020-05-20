@@ -6,7 +6,7 @@ export default (props) => {
         borderSize = props.borderSize || 4,
         size = props.size || 30,
         animationDuration = props.animationDuration || 2,
-        bgColor = props.bgColor || "white",
+        bgColor = props.bgColor || Definitions.PRIMARY_COLOR,
         color = props.color || Definitions.SECONDARY_COLOR;
 
     return (
