@@ -13,7 +13,8 @@ export default (props) => {
                     ...props.style,
                     backgroundColor: Definitions.COMPONENT_BG_COLOR,
                     border: 0,
-                    padding: Definitions.DEFAULT_PADDING
+                    padding: Definitions.DEFAULT_PADDING,
+                    outline: "none"
                 }}
                 onClick={ props.onClick }
                 type={ props.type || "button" }
