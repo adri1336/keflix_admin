@@ -6,6 +6,8 @@ import Checkbox from "components/Checkbox";
 import Button from "components/Button";
 import Spinner from "components/Spinner";
 import Modal from "components/Modal";
+import Alert from "components/Alert";
+import * as Auth from "api/Auth";
 
 export default () => {
     const { t } = useTranslation();
@@ -14,12 +16,23 @@ export default () => {
         [server, setServer] = React.useState(""),
         [email, setEmail] = React.useState(""),
         [password, setPassword] = React.useState(""),
-        [loading, setLoading] = React.useState(false);
-
-    const handleSubmit = (event) => {
-        setLoading(true);
-        
+        [modal, setModal] = React.useState({ alert: "hola" });
+    
+    const handleSubmit = async (event) => {
         event.preventDefault();
+        setModal({ loading: true });
+        
+        const account = {
+            email: email,
+            password: password
+        };
+        const data = await Auth.login(server, account);
+        if(data) {
+
+        }
+        else {
+            
+        }
     }
 
     return (
@@ -39,11 +52,13 @@ export default () => {
                     justifyContent: "center",
                     alignItems: "center",
                     backgroundColor: "rgba(0, 0, 0, 0.5)",
-                    display: loading ? "flex" : "none"
+                    display: modal ? "flex" : "none"
                 }}
             >
-                <Spinner/>
+                { modal?.loading && <Spinner/> }
+                { modal?.alert && <Alert message={ modal.alert }/> }
             </Modal>
+            
             <img
                 src={ require("assets/logo.png") }
                 style={{
@@ -62,13 +77,13 @@ export default () => {
                     style={{
                         border: 0
                     }}
-                    disabled={ loading ? true : false }
+                    disabled={ modal ? true : false }
                 >
                     <Input
                         required
                         title={ t("login.server_input").toUpperCase() }
                         type="url"
-                        style={{ width: "100%" }}
+                        
                         value={ server }
                         onChange={ (event) => setServer(event.target.value) }
                     />
@@ -76,7 +91,6 @@ export default () => {
                         title={ t("login.email_input").toUpperCase() }
                         required
                         type="email"
-                        style={{ width: "100%" }}
                         value={ email }
                         onChange={ (event) => setEmail(event.target.value) }
                     />
@@ -84,18 +98,16 @@ export default () => {
                         title={ t("login.password_input").toUpperCase() }
                         required
                         type="password"
-                        style={{ width: "100%" }}
                         value={ password }
                         onChange={ (event) => setPassword(event.target.value) }
                     />
                     <Checkbox
                         title={ t("login.remember_checkbox").toUpperCase() }
-                        style={{ width: "100%" }}
                     />
                     <Button
                         title={ t("login.login_button").toUpperCase() }
                         type="submit"
-                        style={{ width: "100%" }}
+                        style={{ flexDirection: "column", margin: Definitions.DEFAULT_MARGIN }}
                     />
                 </fieldset>
             </form>

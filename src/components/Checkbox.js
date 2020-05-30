@@ -5,6 +5,7 @@ export default (props) => {
     return (
         <div
             style={{
+                display: "flex",
                 margin: Definitions.DEFAULT_MARGIN
             }}
         >

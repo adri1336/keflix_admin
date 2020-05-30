@@ -5,16 +5,15 @@ export default (props) => {
     return (
         <div
             style={{
-                marginLeft: Definitions.DEFAULT_MARGIN
+                display: "flex",
+                ...props.style
             }}
         >
             <button
                 style={{
-                    ...props.style,
                     backgroundColor: Definitions.COMPONENT_BG_COLOR,
                     border: 0,
                     padding: Definitions.DEFAULT_PADDING,
-                    outline: "none"
                 }}
                 onClick={ props.onClick }
                 type={ props.type || "button" }

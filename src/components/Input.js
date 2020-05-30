@@ -11,6 +11,7 @@ export default (props) => {
     return (
         <div
             style={{
+                display: "flex",
                 flexDirection: "column",
                 margin: Definitions.DEFAULT_MARGIN
             }}

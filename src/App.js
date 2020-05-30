@@ -21,22 +21,19 @@ export default function App() {
 
 	return (
 		<AuthContext.Provider value={{ state: state, setState: setState }}>
-			<BrowserRouter>
-				<Switch>
-					<Route exact path="/">
-						<AuthContext.Consumer>
-							{
-								props => 
-									{
-										console.log(props);
-										return <LoginPage/>;
-									}
-							}
-							
-						</AuthContext.Consumer>
-					</Route>
-				</Switch>
-			</BrowserRouter>
+			<AuthContext.Consumer>
+				{
+					props => {
+						return (
+							<BrowserRouter>
+								<Switch>
+									<Route exact path="/" component={ LoginPage }/>
+								</Switch>
+							</BrowserRouter>
+						)
+					}
+				}
+			</AuthContext.Consumer>
 		</AuthContext.Provider>
 	);
 }
