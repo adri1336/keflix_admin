@@ -16,7 +16,7 @@ export default () => {
         [server, setServer] = React.useState(""),
         [email, setEmail] = React.useState(""),
         [password, setPassword] = React.useState(""),
-        [modal, setModal] = React.useState({ alert: "hola" });
+        [modal, setModal] = React.useState(null);
     
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -27,12 +27,17 @@ export default () => {
             password: password
         };
         const data = await Auth.login(server, account);
+        console.log("data: ", data);
         if(data) {
 
         }
         else {
-            
+            setModal({ alert: "No se ha podido iniciar sesión, comprueba que todos los datos sean correctos." });
         }
+    }
+
+    const handleAlertButton = () => {
+        setModal(null);
     }
 
     return (
@@ -56,7 +61,7 @@ export default () => {
                 }}
             >
                 { modal?.loading && <Spinner/> }
-                { modal?.alert && <Alert message={ modal.alert }/> }
+                { modal?.alert && <Alert title="Error" message={ modal.alert } buttons={ [{ title: "Cerrar" }] } onButtonClick={ handleAlertButton }/> }
             </Modal>
             
             <img

@@ -22,12 +22,13 @@ export const _fetch = async (server, path, method = "GET", token = null, body = 
         const response = await timeout(FETCH_TIMEOUT, fetch(server + "/api" + path, {
             method: method,
             signal: signal,
-            headers: {
+            headers: {         
                 Accept: "application/json",
                 "Authorization": token ? "Bearer " + token : null,
                 "Content-Type": "application/json"
             },
-            body: body ? JSON.stringify(body) : null
+            body: body ? JSON.stringify(body) : null,
+            mode: "no-cors"
         }));
 
         let data = null;
