@@ -27,8 +27,7 @@ export const _fetch = async (server, path, method = "GET", token = null, body = 
                 "Authorization": token ? "Bearer " + token : null,
                 "Content-Type": "application/json"
             },
-            body: body ? JSON.stringify(body) : null,
-            mode: "no-cors"
+            body: body ? JSON.stringify(body) : null
         }));
 
         let data = null;
