@@ -4,6 +4,9 @@
         "email_input": "Correo electrónico",
         "password_input": "Contraseña",
         "remember_checkbox": "Recordar credenciales",
-        "login_button": "Iniciar sesión"
+        "login_button": "Iniciar sesión",
+        "title_alert": "Error",
+        "message_alert": "No se ha podido iniciar sesión, comprueba que todos los datos sean correctos.",
+        "close_button_alert": "Cerrar"
     }
 }

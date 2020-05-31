@@ -26,6 +26,8 @@ export default (props) => {
                         height: 20
                     }}
                     type="checkbox"
+                    onChange={ props.onChange }
+                    checked={ props.checked }
                 />
                 { props.title }
             </label>

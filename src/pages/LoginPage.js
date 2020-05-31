@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import Definitions from "utils/Definitions";
+import Definitions, { STORAGE_KEYS } from "utils/Definitions";
 import Input from "components/Input";
 import Checkbox from "components/Checkbox";
 import Button from "components/Button";
@@ -8,14 +8,20 @@ import Spinner from "components/Spinner";
 import Modal from "components/Modal";
 import Alert from "components/Alert";
 import * as Auth from "api/Auth";
+import * as Account from "api/Account";
+import { AuthContext } from "context/Auth";
+import { useHistory } from "react-router-dom";
 
 export default () => {
+    const history = useHistory();
+    const authContext = React.useContext(AuthContext);
     const { t } = useTranslation();
 
     const
         [server, setServer] = React.useState(""),
         [email, setEmail] = React.useState(""),
         [password, setPassword] = React.useState(""),
+        [remember, setRemember] = React.useState(false),
         [modal, setModal] = React.useState(null);
     
     const handleSubmit = async (event) => {
@@ -27,18 +33,56 @@ export default () => {
             password: password
         };
         const data = await Auth.login(server, account);
-        console.log("data: ", data);
-        if(data) {
 
+        if(data && data.account.admin) {
+            if(remember) {
+                localStorage.setItem(STORAGE_KEYS.SERVER, server);
+                localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, data.access_token);
+                localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, data.refresh_token);
+            }
+            login(data.access_token, data.refresh_token, data.account, server);
         }
         else {
-            setModal({ alert: "No se ha podido iniciar sesión, comprueba que todos los datos sean correctos." });
+            setModal({ alert: t("login.message_alert") });
         }
     }
 
     const handleAlertButton = () => {
         setModal(null);
     }
+
+    const login = React.useCallback((accessToken, refreshToken, account, server) => {
+        authContext.setState({
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+            account: account,
+            server: server
+        });
+        history.replace("/");
+    }, [authContext, history]);
+
+    React.useEffect(() => {
+        const
+            server = localStorage.getItem(STORAGE_KEYS.SERVER),
+            accessToken = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN),
+            refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
+        
+        if(server && accessToken && refreshToken) {
+            setModal({ loading: true });
+            (
+                async () => {
+                    const data = await Account.getPassToken(server, accessToken);
+                    if(data) {
+                        login(accessToken, refreshToken, data, server);
+                    }
+                    else {
+                        localStorage.clear();
+                        setModal(null);
+                    }
+                }
+            )();
+        }
+    }, [login]);
 
     return (
         <div
@@ -61,7 +105,7 @@ export default () => {
                 }}
             >
                 { modal?.loading && <Spinner/> }
-                { modal?.alert && <Alert title="Error" message={ modal.alert } buttons={ [{ title: "Cerrar" }] } onButtonClick={ handleAlertButton }/> }
+                { modal?.alert && <Alert title={ t("login.title_alert") } message={ modal.alert } buttons={ [{ title: t("login.close_button_alert") }] } onButtonClick={ handleAlertButton }/> }
             </Modal>
             
             <img
@@ -108,6 +152,8 @@ export default () => {
                     />
                     <Checkbox
                         title={ t("login.remember_checkbox").toUpperCase() }
+                        onChange={ (event) => setRemember(event.target.checked) }
+                        checked={ remember }
                     />
                     <Button
                         title={ t("login.login_button").toUpperCase() }

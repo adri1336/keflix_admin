@@ -3,7 +3,8 @@ import "translations/i18n";
 import {
 	BrowserRouter,
 	Switch,
-	Route
+	Route,
+	Redirect
 } from "react-router-dom";
 import { AuthContext } from "context/Auth";
 
@@ -13,7 +14,7 @@ const initialState = {
     accessToken: null,
     refreshToken: null,
     account: null,
-    server: "test"
+    server: null
 };
 
 export default function App() {
@@ -27,7 +28,8 @@ export default function App() {
 						return (
 							<BrowserRouter>
 								<Switch>
-									<Route exact path="/" component={ LoginPage }/>
+									<Route exact path="/login" component={ LoginPage }/>
+									<ProtectedRoute exact path="/" render={ () => console.log("context: ", props) }/>
 								</Switch>
 							</BrowserRouter>
 						)
@@ -37,3 +39,22 @@ export default function App() {
 		</AuthContext.Provider>
 	);
 }
+
+const ProtectedRoute = ({ render, ...routeProps }) => {
+	const authContext = React.useContext(AuthContext);
+	return (
+		<Route
+			{ ...routeProps }
+			render={
+				() => {
+					if(authContext.state.account) {
+						render();
+					}
+					else {
+						return <Redirect to="/login"/>;
+					}
+				}
+			}
+		/>
+	);
+};

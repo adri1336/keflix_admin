@@ -19,3 +19,9 @@ export const DEFAULT_SIZES = {
     MEDIUM_SIZE: "10pt",
     SMALL_SIZE: "8pt"
 };
+
+export const STORAGE_KEYS = {
+    SERVER: "server",
+    ACCESS_TOKEN: "access_token",
+    REFRESH_TOKEN: "refresh_token"
+}
