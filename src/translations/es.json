@@ -1,4 +1,9 @@
 {
+    "app": {
+        "main": "Vista general",
+        "accounts": "Cuentas",
+        "movies": "Películas"
+    },
     "login": {
         "server_input": "Servidor",
         "email_input": "Correo electrónico",

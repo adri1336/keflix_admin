@@ -1,5 +1,6 @@
 export default {
-    PRIMARY_COLOR: "#282c34",
+    PRIMARY_COLOR: "#252526",
+    SECONDARY_BG_COLOR: "#333333",
     SECONDARY_COLOR: "#B8822F",
     TEXT_COLOR: "#FFFFFF",
     SECONDARY_TEXT_COLOR: "#b9bbbe",

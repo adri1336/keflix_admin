@@ -10,10 +10,8 @@ import Alert from "components/Alert";
 import * as Auth from "api/Auth";
 import * as Account from "api/Account";
 import { AuthContext } from "context/Auth";
-import { useHistory } from "react-router-dom";
 
 export default () => {
-    const history = useHistory();
     const authContext = React.useContext(AuthContext);
     const { t } = useTranslation();
 
@@ -58,8 +56,7 @@ export default () => {
             account: account,
             server: server
         });
-        history.replace("/");
-    }, [authContext, history]);
+    }, [authContext]);
 
     React.useEffect(() => {
         const
@@ -132,7 +129,6 @@ export default () => {
                         required
                         title={ t("login.server_input").toUpperCase() }
                         type="url"
-                        
                         value={ server }
                         onChange={ (event) => setServer(event.target.value) }
                     />
