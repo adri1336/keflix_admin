@@ -25,9 +25,12 @@
         "address": "Dirección: {{address}}",
         "media_path": "Ruta de medios: {{path}}",
         "stats": "Estadísticas",
-        "accounts": "Cuentas: {{accounts}}",
-        "profiles": "Perfiles: {{profiles}}",
-        "genres": "Géneros: {{genres}}",
-        "movies": "Películas: {{movies}}"
+        "accounts": "Cuentas",
+        "profiles": "Perfiles",
+        "genres": "Géneros",
+        "movies": "Películas",
+        "cpu": "cpu",
+        "memory": "ram",
+        "disk": "disco"
     }
 }

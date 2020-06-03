@@ -23,6 +23,23 @@ export default ({ routes, width }) => {
         >
             <div
                 style={{
+                    position: "absolute",
+                    right: 0,
+                    bottom: 0,
+                    padding: Definitions.DEFAULT_PADDING
+                }}
+            >
+                <span
+                    style={{
+                        color: Definitions.DARK_TEXT_COLOR,
+                        fontSize: DEFAULT_SIZES.MEDIUM_SIZE
+                    }}
+                >
+                    { Definitions.APP_VERSION }
+                </span>
+            </div>
+            <div
+                style={{
                     display: "flex",
                     flex: 1,
                     height: 50,
