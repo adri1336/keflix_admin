@@ -2,7 +2,8 @@
     "app": {
         "main": "Vista general",
         "accounts": "Cuentas",
-        "movies": "Películas"
+        "movies": "Películas",
+        "config": "Configuración"
     },
     "login": {
         "server_input": "Servidor",
@@ -13,5 +14,20 @@
         "title_alert": "Error",
         "message_alert": "No se ha podido iniciar sesión, comprueba que todos los datos sean correctos.",
         "close_button_alert": "Cerrar"
+    },
+    "sidebar": {
+        "logout_button": "Cerrar sesión"
+    },
+    "info": {
+        "system": "Sistema",
+        "platform": "Plataforma: {{platform}}",
+        "server_version": "Versión del servidor: {{version}}",
+        "address": "Dirección: {{address}}",
+        "media_path": "Ruta de medios: {{path}}",
+        "stats": "Estadísticas",
+        "accounts": "Cuentas: {{accounts}}",
+        "profiles": "Perfiles: {{profiles}}",
+        "genres": "Géneros: {{genres}}",
+        "movies": "Películas: {{movies}}"
     }
 }

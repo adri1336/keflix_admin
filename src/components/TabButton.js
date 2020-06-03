@@ -12,6 +12,7 @@ export default ({ route }) => {
             to={ route.path }
             style={{
                 display: "flex",
+                borderTop: route.separator ? "1px solid " + Definitions.COMPONENT_BG_COLOR : "0",
                 borderLeft: location.pathname === route.path ? "2px solid " + Definitions.SECONDARY_COLOR : "2px solid transparent",
                 flex: 1,
                 alignItems: "center",

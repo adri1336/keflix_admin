@@ -8,7 +8,7 @@ export default () => {
                 flex: 1
             }}
         >
-            <h1>Información</h1>
+            <h1>Configuración</h1>
         </div>
     );
 }

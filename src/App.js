@@ -10,23 +10,17 @@ import Definitions from "utils/Definitions";
 import { useTranslation } from "react-i18next";
 
 import { AiOutlineBarChart } from "react-icons/ai";
-import { MdSupervisorAccount, MdMovie } from "react-icons/md";
+import { MdSupervisorAccount, MdMovie, MdSettings } from "react-icons/md";
 
-import LoginPage from "pages/LoginPage";
+import LoginPage from "pages/Login";
 import Sidebar from "components/Sidebar";
-import InfoPage from "pages/InfoPage";
-import AccountsPage from "pages/AccountsPage";
-import MoviesPage from "pages/MoviesPage";
-
-const initialState = {
-    accessToken: null,
-    refreshToken: null,
-    account: null,
-    server: null
-};
+import InfoPage from "pages/Info";
+import AccountsPage from "pages/Accounts";
+import MoviesPage from "pages/Movies";
+import ConfigPage from "pages/Config";
 
 export default function App() {
-	const [state, setState] = React.useState(initialState);
+	const [state, setState] = React.useState(null);
 
 	const { t } = useTranslation();
 	const routes = [
@@ -47,6 +41,13 @@ export default function App() {
 			name: t("app.movies"),
 			component: MoviesPage,
 			icon: MdMovie
+		},
+		{
+			path: "/config",
+			name: t("app.config"),
+			component: ConfigPage,
+			icon: MdSettings,
+			separator: true
 		}
 	];
 
@@ -55,7 +56,7 @@ export default function App() {
 			<AuthContext.Consumer>
 				{
 					props => {
-						if(props.state.account) {
+						if(props.state?.account) {
 							return (
 								<BrowserRouter>
 									<div

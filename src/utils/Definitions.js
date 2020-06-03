@@ -12,8 +12,8 @@ export default {
 };
 
 export const DEFAULT_SIZES = {
-    BIG_TITLE_SIZE: "50pt",
-    TITLE_SIZE: "35pt",
+    BIG_TITLE_SIZE: "30pt",
+    TITLE_SIZE: "24pt",
     BIG_SIZE: "16pt",
     BIG_SUBTITLE_SIZE: "15pt",
     NORMAL_SIZE: "12pt",

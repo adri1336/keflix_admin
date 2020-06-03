@@ -19,7 +19,7 @@ export default (props) => {
                 type={ props.type || "button" }
             >
                 <span
-                        style={{
+                    style={{
                         color: Definitions.TEXT_COLOR,
                         fontSize: DEFAULT_SIZES.NORMAL_SIZE
                     }}

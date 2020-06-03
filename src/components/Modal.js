@@ -1,17 +1,17 @@
 import React from "react";
 
-export default (props) => {   
+export default ({ style, relative, children }) => {   
     return (
         <div
             style={{
-                ...props.style,
-                width: "100vw",
-                height: "100vh",
-                position: "fixed",
+                ...style,
+                width: relative ? "100%" : "100vw",
+                height: relative ? "100%" : "100vh",
+                position: "absolute",
                 zIndex: 1
             }}
         >
-            { props.children }
+            { children }
         </div>
     );
 }
