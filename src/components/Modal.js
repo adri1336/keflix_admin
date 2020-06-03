@@ -8,7 +8,7 @@ export default ({ style, relative, children }) => {
                 width: relative ? "100%" : "100vw",
                 height: relative ? "100%" : "100vh",
                 position: "absolute",
-                zIndex: 1
+                zIndex: 2
             }}
         >
             { children }

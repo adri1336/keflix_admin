@@ -50,6 +50,7 @@ export default function App() {
 			separator: true
 		}
 	];
+	const sidebarWidth = 250;
 
 	return (
 		<AuthContext.Provider value={{ state: state, setState: setState }}>
@@ -63,20 +64,30 @@ export default function App() {
 										style={{
 											display: "flex",
 											flex: 1,
-											flexDirection: "row",
-											backgroundColor: Definitions.PRIMARY_COLOR
+											flexDirection: "row"
 										}}
 									>
 										<Sidebar
 											routes={ routes }
+											width={ sidebarWidth }
 										/>
-										<Switch>
-											{
-												routes.map((route) => {
-													return <Route key={ route.path } exact path={ route.path } component={ route.component }/>;
-												})
-											}
-										</Switch>
+										<div
+											style={{
+												marginLeft: sidebarWidth,
+												display: "flex",
+												flex: 1,
+												minHeight: "100vh",
+												backgroundColor: Definitions.PRIMARY_COLOR
+											}}
+										>
+											<Switch>
+												{
+													routes.map((route) => {
+														return <Route key={ route.path } exact path={ route.path } component={ route.component }/>;
+													})
+												}
+											</Switch>
+										</div>
 									</div>
 								</BrowserRouter>
 							);

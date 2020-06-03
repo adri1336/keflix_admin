@@ -17,6 +17,7 @@ export default () => {
                 async () => {
                     const info = await Info.get(authContext);
                     if(info) {
+                        console.log(info);
                         setData(info);
                     }
                 }
@@ -30,7 +31,6 @@ export default () => {
                 display: "flex",
                 flexDirection: "column",
                 flex: 1,
-                justifyContent: "center",
                 position: "relative"
             }}
         >
@@ -52,7 +52,6 @@ export default () => {
                 style={{
                     margin: Definitions.DEFAULT_MARGIN,
                     display: "flex",
-                    flex: 2,
                     flexDirection: "column"
                 }}
             >
@@ -106,6 +105,7 @@ export default () => {
                         marginTop: Definitions.DEFAULT_PADDING
                     }}
                 >
+                    
 
                 </div>
 
@@ -115,7 +115,6 @@ export default () => {
                 style={{
                     margin: Definitions.DEFAULT_MARGIN,
                     display: "flex",
-                    flex: 1,
                     flexDirection: "column"
                 }}
             >

@@ -5,19 +5,20 @@ import { MdAccountCircle } from "react-icons/md";
 import { AuthContext } from "context/Auth";
 import { useTranslation } from "react-i18next";
 
-export default ({ routes }) => {
+export default ({ routes, width }) => {
     const authContext = React.useContext(AuthContext);
     const { t } = useTranslation();
     
     return (
         <div
             style={{
-                position: "relative",
+                position: "fixed",
                 backgroundColor: Definitions.SECONDARY_BG_COLOR,
-                width: 250,
-                minWidth: 250,
-                height: "100vh",
-                borderRight: "1px solid " + Definitions.COMPONENT_BG_COLOR
+                width: width,
+                minWidth: width,
+                height: "100%",
+                borderRight: "1px solid " + Definitions.COMPONENT_BG_COLOR,
+                zIndex: 1
             }}
         >
             <div
