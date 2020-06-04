@@ -37,7 +37,7 @@ export default (props) => {
                     border: "1px solid",
                     borderColor: focused ? Definitions.SECONDARY_COLOR : Definitions.COMPONENT_BORDER_COLOR,
                     color: Definitions.TEXT_COLOR,
-                    borderRadius: 2,
+                    borderRadius: Definitions.DEFAULT_BORDER_RADIUS,
                     marginTop: 2
                 }}
                 type={ type }

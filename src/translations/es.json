@@ -32,5 +32,12 @@
         "cpu": "cpu",
         "memory": "ram",
         "disk": "disco"
+    },
+    "accounts": {
+        "title": "Cuentas",
+        "total": "Total: {{total}}",
+        "add_button": "Añadir",
+        "id_header": "Id",
+        "email_header": "Correo electrónico"
     }
 }

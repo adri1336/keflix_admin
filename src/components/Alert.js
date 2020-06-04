@@ -17,7 +17,7 @@ export default (props) => {
                 maxWidth: 400,
                 minHeight: 100,
                 maxHeight: 200,
-                borderRadius: 1,
+                borderRadius: Definitions.DEFAULT_BORDER_RADIUS,
                 backgroundColor: bgColor,
                 padding: Definitions.DEFAULT_MARGIN
             }}

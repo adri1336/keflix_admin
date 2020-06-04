@@ -64,38 +64,48 @@ export default () => {
                 >
                     { t("info.system") } 
                 </span>
-                <span
+
+                <div
                     style={{
-                        color: Definitions.DARK_TEXT_COLOR,
-                        fontSize: DEFAULT_SIZES.NORMAL_SIZE,
+                        display: "flex",
+                        flex: 1,
+                        flexDirection: "column",
+                        userSelect: "text"
                     }}
                 >
-                    { t("info.platform", { platform: data?.system.platform }) } 
-                </span>
-                <span
-                    style={{
-                        color: Definitions.DARK_TEXT_COLOR,
-                        fontSize: DEFAULT_SIZES.NORMAL_SIZE,
-                    }}
-                >
-                    { t("info.server_version", { version: data?.server.version }) } 
-                </span>
-                <span
-                    style={{
-                        color: Definitions.DARK_TEXT_COLOR,
-                        fontSize: DEFAULT_SIZES.NORMAL_SIZE,
-                    }}
-                >
-                    { t("info.address", { address: authContext?.state.server }) } 
-                </span>
-                <span
-                    style={{
-                        color: Definitions.DARK_TEXT_COLOR,
-                        fontSize: DEFAULT_SIZES.NORMAL_SIZE,
-                    }}
-                >
-                    { t("info.media_path", { path: data?.system.media_path }) } 
-                </span>
+                    <span
+                        style={{
+                            color: Definitions.DARK_TEXT_COLOR,
+                            fontSize: DEFAULT_SIZES.NORMAL_SIZE,
+                        }}
+                    >
+                        { t("info.platform", { platform: data?.system.platform }) } 
+                    </span>
+                    <span
+                        style={{
+                            color: Definitions.DARK_TEXT_COLOR,
+                            fontSize: DEFAULT_SIZES.NORMAL_SIZE,
+                        }}
+                    >
+                        { t("info.server_version", { version: data?.server.version }) } 
+                    </span>
+                    <span
+                        style={{
+                            color: Definitions.DARK_TEXT_COLOR,
+                            fontSize: DEFAULT_SIZES.NORMAL_SIZE,
+                        }}
+                    >
+                        { t("info.address", { address: authContext?.state.server }) } 
+                    </span>
+                    <span
+                        style={{
+                            color: Definitions.DARK_TEXT_COLOR,
+                            fontSize: DEFAULT_SIZES.NORMAL_SIZE,
+                        }}
+                    >
+                        { t("info.media_path", { path: data?.system.media_path }) } 
+                    </span>
+                </div>
                 
                 <div
                     style={{
