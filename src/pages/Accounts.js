@@ -122,11 +122,30 @@ export default () => {
                             name: t("accounts.email_header"),
                             orderable: true,
                             filterType: FILTER_DATA_TYPES.TEXT
+                        },
+                        {
+                            id: "profiles",
+                            name: t("accounts.profiles_header"),
+                            orderable: true,
+                            filterType: FILTER_DATA_TYPES.NUMBER
                         }
                     ]}
                     onRenderCell={
                         (headerId, index) => {
                             switch(headerId) {
+                                case "profiles": {
+                                    return (
+                                        <span
+                                            style={{
+                                                color: Definitions.DARK_TEXT_COLOR,
+                                                fontSize: DEFAULT_SIZES.NORMAL_SIZE
+                                            }}
+                                        >
+                                            { data[index].profiles.length }
+                                        </span>
+                                    );
+                                    break;
+                                }
                                 default: {
                                     return (
                                         <span

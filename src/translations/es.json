@@ -38,6 +38,7 @@
         "total": "Total: {{total}}",
         "add_button": "Añadir",
         "id_header": "Id",
+        "profiles_header": "Perfiles",
         "email_header": "Correo electrónico"
     }
 }
