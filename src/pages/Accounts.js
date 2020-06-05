@@ -144,7 +144,6 @@ export default () => {
                                             { data[index].profiles.length }
                                         </span>
                                     );
-                                    break;
                                 }
                                 default: {
                                     return (
@@ -157,6 +156,34 @@ export default () => {
                                             { data[index][headerId] }
                                         </span>
                                     );
+                                }
+                            }
+                        }
+                    }
+                    onSortRequest={
+                        (headerId) => {
+                            switch(headerId) {
+                                case "profiles": {
+                                    return data.sort((a, b) => {
+                                        if(a.profiles.length < b.profiles.length) {
+                                            return -1;
+                                        }
+                                        if(a.profiles.length > b.profiles.length ) {
+                                            return 1;
+                                        }
+                                        return 0;
+                                    });
+                                }
+                                default: {
+                                    return data.sort((a, b) => {
+                                        if(a[headerId] < b[headerId]) {
+                                            return -1;
+                                        }
+                                        if(a[headerId] > b[headerId]) {
+                                            return 1;
+                                        }
+                                        return 0;
+                                    });
                                 }
                             }
                         }

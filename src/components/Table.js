@@ -1,6 +1,7 @@
 import React from "react";
 import Definitions, { DEFAULT_SIZES } from "utils/Definitions";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { getScrollbarWidth } from "utils/Functions";
 
 export const FILTER_DATA_TYPES = {
     TEXT: 0,
@@ -14,9 +15,71 @@ export const ORDERS = {
     DESC: 1
 };
 
-export default ({ data, headersAlign, cellsAlign, headers, onRenderCell, onRowClick }) => {
+export default ({ data, headersAlign, cellsAlign, headers, onRenderCell, onSortRequest, onRowClick }) => {
+    const [filteredData, setFilteredData] = React.useState(Object.create(data));
+    const [tbodyHeight, setTbodyHeight] = React.useState(0);
+    const [isScrollbarVisible, setIsScrollbarVisible] = React.useState(false);
+    
+    const
+        containerElement = React.createRef(),
+        theadElement = React.createRef(),
+        tbodyElement = React.createRef();
+
+    React.useEffect(() => {
+        if(data && data.length > 0) {
+            setFilteredData(Object.create(data));
+        }
+    }, [data]);
+
+    React.useEffect(() => {
+        setTbodyHeight(containerElement.current.clientHeight - theadElement.current.clientHeight);
+
+        let resizing = false;
+        window.addEventListener("resize", () => {
+            if(!resizing) {
+                setTbodyHeight(0);
+            }
+            resizing = true;
+            if(containerElement.current && theadElement.current) {
+                resizing = false;
+                setTbodyHeight(containerElement.current.clientHeight - theadElement.current.clientHeight);
+            }
+        });
+        return () => window.removeEventListener("resize", () => {});
+    }, [containerElement, theadElement, tbodyElement]);
+
+    React.useEffect(() => {
+        if(tbodyElement.current) {
+            if(tbodyElement.current.scrollHeight > tbodyElement.current.clientHeight) {
+                if(!isScrollbarVisible) {
+                    setIsScrollbarVisible(true);
+                }
+            }
+            else {
+                if(isScrollbarVisible) {
+                    setIsScrollbarVisible(false);
+                }
+            }
+        }
+    }, [tbodyHeight, tbodyElement, isScrollbarVisible]);
+
+    const setNewData = (newData) => {
+        for (let i = 0; i < newData.length; i++) {
+            const filteredElement = newData[i];
+            for (let j = 0; j < data.length; j++) {
+                const dataElement = data[j];
+                if(filteredElement === dataElement) {
+                    filteredElement.realIndex = j;
+                    break;
+                }
+            }
+        }
+        setFilteredData(newData);
+    }
+
     return (
         <div
+            ref={ containerElement }
             style={{
                 display: "flex",
                 flexDirection: "column",
@@ -32,12 +95,22 @@ export default ({ data, headersAlign, cellsAlign, headers, onRenderCell, onRowCl
                 }}
             >
 
-                <thead>
+                <thead
+                    ref={ theadElement }
+                    style={{
+                        display: "table",
+                        width: "100%",
+                        tableLayout: "fixed",
+                        backgroundColor: Definitions.SECONDARY_BG_COLOR
+                    }}
+                >
                     {
                         headers && headers.length > 0 &&
                         <tr
                             style={{
-                                backgroundColor: Definitions.SECONDARY_BG_COLOR,
+                                display: "table",
+                                width: isScrollbarVisible ? "calc(100% - " + getScrollbarWidth() + "px)" : "100%",
+                                tableLayout: "fixed",
                                 borderBottom: "1px solid " + Definitions.COMPONENT_BG_COLOR
                             }}
                         >
@@ -48,6 +121,17 @@ export default ({ data, headersAlign, cellsAlign, headers, onRenderCell, onRowCl
                                             key={ header.id }
                                             headersAlign={ headersAlign }
                                             header={ header }
+                                            onOrderChange={
+                                                (headerId, order) => {
+                                                    if(onSortRequest) {
+                                                        const newData = Object.create(onSortRequest(headerId));
+                                                        if(order === ORDERS.DESC) {
+                                                            newData.reverse();
+                                                        }
+                                                        setNewData(newData);
+                                                    }
+                                                }
+                                            }
                                         />
                                     );
                                 })
@@ -56,15 +140,23 @@ export default ({ data, headersAlign, cellsAlign, headers, onRenderCell, onRowCl
                     }
                 </thead>
 
-                <tbody>
+                <tbody
+                    ref={ tbodyElement }
+                    style={{
+                        display: "block",
+                        height: tbodyHeight,
+                        overflow: "auto",
+                        tableLayout: "fixed"
+                    }}
+                >
                 {
-                    data && data.length > 0 &&
-                    data.map((element, index) => {
+                    filteredData && filteredData.length > 0 &&
+                    filteredData.map((element, index) => {
                         return (
                             <Row
                                 key={ index }
                                 headers={ headers }
-                                index={ index }
+                                index={ element?.realIndex === undefined ? index : element.realIndex }
                                 cellsAlign={ cellsAlign }
                                 onRenderCell={ onRenderCell }
                                 onRowClick={ onRowClick }
@@ -107,7 +199,7 @@ const Header = ({ header, headersAlign, onOrderChange }) => {
             <div
                 style={{
                     display: "flex",
-                    width: "100%",
+                    flex: 1,
                     flexDirection: "row",
                     alignItems: "center",
                     justifyContent: contentJustifyContent
@@ -125,7 +217,7 @@ const Header = ({ header, headersAlign, onOrderChange }) => {
                             const newOrder = order === ORDERS.ASC ? ORDERS.DESC : ORDERS.ASC;
                             setOrder(newOrder);
                             if(onOrderChange) {
-                                onOrderChange(newOrder);
+                                onOrderChange(header.id, newOrder);
                             }
                         }
                     }
@@ -158,6 +250,9 @@ const Row = ({ headers, index, cellsAlign, onRenderCell, onRowClick }) => {
     return (
         <tr
             style={{
+                display: "table",
+                width: "100%",
+                tableLayout: "fixed",
                 backgroundColor: focused ? Definitions.COMPONENT_BG_COLOR : "transparent",
                 borderBottom: "1px solid " + Definitions.COMPONENT_BG_COLOR,
                 textAlign: cellsAlign || "left",
