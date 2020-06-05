@@ -1,24 +1,37 @@
 import React from "react";
 import Definitions, { DEFAULT_SIZES } from "utils/Definitions";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-
-export const FILTER_DATA_TYPES = {
-    TEXT: 0,
-    NUMBER: 1,
-    BOOLEAN: 2,
-    BOOLEAN_BOTH: 3
-};
+import { TiDelete } from "react-icons/ti";
+import ContentEditable from "react-contenteditable";
+import { useTranslation } from "react-i18next";
 
 export const ORDERS = {
     ASC: 0,
     DESC: 1
 };
 
-export default ({ data, headersAlign, cellsAlign, headers, onRenderCell, onSortRequest, onRowClick }) => {
+const filterHeaderHeight = 20;
+const isTableFilterable = (headers) => {
+    for (let index = 0; index < headers.length; index++) {
+        const header = headers[index];
+        if(header.filterable) {
+            return true;
+        }
+    }
+    return false;
+};
+
+export default ({ data, headersAlign, cellsAlign, headers, onRenderCell, onRowClick }) => {
     const [filteredData, setFilteredData] = React.useState(Object.create(data));
     const [tableHeight, setTableHeight] = React.useState(0);
     
     const containerElement = React.createRef();
+
+    React.useEffect(() => {
+        headers.forEach(header => {
+            header.filter = "";
+        });
+    }, [headers]);
 
     React.useEffect(() => {
         if(data && data.length > 0) {
@@ -56,6 +69,16 @@ export default ({ data, headersAlign, cellsAlign, headers, onRenderCell, onSortR
             }
         }
         setFilteredData(newData);
+    }
+
+    const getFilters = () => {
+        let filters = {};
+        headers.forEach(header => {
+            if(header.filter) {
+                filters[header.id] = header.filter;
+            }
+        });
+        return filters;
     }
 
     return (
@@ -104,17 +127,42 @@ export default ({ data, headersAlign, cellsAlign, headers, onRenderCell, onSortR
                                         return (
                                             <Header
                                                 key={ header.id }
+                                                tableFilterable={ isTableFilterable(headers) }
                                                 headersAlign={ headersAlign }
                                                 header={ header }
                                                 onOrderChange={
                                                     (headerId, order) => {
-                                                        if(onSortRequest) {
-                                                            const newData = Object.create(onSortRequest(headerId));
-                                                            if(order === ORDERS.DESC) {
-                                                                newData.reverse();
+                                                        const newData = filteredData.sort((a, b) => {
+                                                            if(a[headerId] < b[headerId]) {
+                                                                return -1;
                                                             }
-                                                            setNewData(newData);
+                                                            if(a[headerId] > b[headerId] ) {
+                                                                return 1;
+                                                            }
+                                                            return 0;
+                                                        });
+                                                        if(order === ORDERS.DESC) {
+                                                            newData.reverse();
                                                         }
+
+                                                        setNewData(Object.create(newData));
+                                                    }
+                                                }
+                                                onFilterRequest={
+                                                    () => {
+                                                        const filters = getFilters();
+                                                        const newData = data.filter(item => {
+                                                            for(let property in filters) {
+                                                                if(item[property] !== undefined) {
+                                                                    const stringValue = item[property].toString();
+                                                                    if(!stringValue.includes(filters[property])) {
+                                                                        return false;
+                                                                    }
+                                                                }
+                                                            }
+                                                            return true;
+                                                        });
+                                                        setNewData(Object.create(newData));
                                                     }
                                                 }
                                             />
@@ -153,7 +201,7 @@ export default ({ data, headersAlign, cellsAlign, headers, onRenderCell, onSortR
     );
 };
 
-const Header = ({ header, headersAlign, onOrderChange }) => {
+const Header = ({ tableFilterable, header, headersAlign, onOrderChange, onFilterRequest }) => {
     const [order, setOrder] = React.useState(header.orderable ? (header.order || ORDERS.ASC) : null);
     const nextOrderIcon = { class: order === ORDERS.ASC ? IoIosArrowDown : IoIosArrowUp };
 
@@ -185,48 +233,178 @@ const Header = ({ header, headersAlign, onOrderChange }) => {
             <div
                 style={{
                     display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: contentJustifyContent
+                    flexDirection: "column"
                 }}
             >
-            {
-                order !== null &&
                 <div
                     style={{
-                        cursor: "pointer",
-                        marginRight: 2
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: contentJustifyContent
                     }}
-                    onClick={
-                        () => {
-                            const newOrder = order === ORDERS.ASC ? ORDERS.DESC : ORDERS.ASC;
-                            setOrder(newOrder);
-                            if(onOrderChange) {
-                                onOrderChange(header.id, newOrder);
+                >
+                    {
+                        order !== null &&
+                        <div
+                            style={{
+                                cursor: "pointer",
+                                marginRight: 2
+                            }}
+                            onClick={
+                                () => {
+                                    const newOrder = order === ORDERS.ASC ? ORDERS.DESC : ORDERS.ASC;
+                                    setOrder(newOrder);
+                                    if(onOrderChange) {
+                                        onOrderChange(header.id, newOrder);
+                                    }
+                                }
+                            }
+                        >
+                            <nextOrderIcon.class
+                                color={ Definitions.SECONDARY_TEXT_COLOR }
+                                size={ DEFAULT_SIZES.BIG_SIZE }
+                            />
+                        </div>
+                    }
+                    {
+                        header.name &&
+                        <span
+                            style={{
+                                color: Definitions.DARK_TEXT_COLOR,
+                                fontSize: DEFAULT_SIZES.NORMAL_SIZE,
+                                fontWeight: "bold",
+                                whiteSpace: "nowrap"
+                            }}
+                        >
+                            { header.name.toUpperCase() }
+                        </span>
+                    }
+                </div>
+                {
+                    tableFilterable &&
+                    <FilteredHeader
+                        header={ header }
+                        onFilterChange={
+                            value => {
+                                if(header.filter !== value) {
+                                    header.filter = value;
+                                    if(onFilterRequest) {
+                                        onFilterRequest();
+                                    }
+                                }
                             }
                         }
-                    }
-                >
-                    <nextOrderIcon.class
-                        color={ Definitions.SECONDARY_TEXT_COLOR }
-                        size={ DEFAULT_SIZES.BIG_SIZE }
                     />
-                </div>
-            }
-            {
-                header.name &&
-                <span
-                    style={{
-                        color: Definitions.DARK_TEXT_COLOR,
-                        fontSize: DEFAULT_SIZES.NORMAL_SIZE,
-                        fontWeight: "bold"
-                    }}
-                >
-                    { header.name.toUpperCase() }
-                </span>
-            }
+                }
             </div>
         </div>
+    );
+}
+
+const FilteredHeader = ({ header, onFilterChange }) => {
+    const [value, setValue] = React.useState(null);
+    const [focused, setFocused] = React.useState(false);
+    const { t } = useTranslation();
+    
+    React.useEffect(() => {
+        if(value !== null && onFilterChange) {
+            onFilterChange(value);
+        }
+    }, [value, onFilterChange]);
+
+    return (
+        <div
+            style={{
+                display: "flex",
+                position: "relative",
+                marginTop: Definitions.DEFAULT_PADDING
+            }}
+        >
+            <div
+                style={{
+                    display: "flex",
+                    position: "relative",
+                    width: "100%",
+                    height: filterHeaderHeight,
+                    paddingTop: Definitions.DEFAULT_PADDING
+                }}
+            >
+                <div
+                    style={{
+                        position: "absolute",
+                        width: "calc(100% + " + Definitions.DEFAULT_PADDING * 2 + "px)",
+                        margin: -Definitions.DEFAULT_PADDING,
+                        height: 1,
+                        backgroundColor: Definitions.PLACEHOLDER_COLOR
+                    }}
+                />
+                {
+                    header.filterable &&
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            position: "absolute",
+                            width: "calc(100% - " + Definitions.DEFAULT_PADDING * 2 + "px)",
+                            left: Definitions.DEFAULT_PADDING,
+                            height: "calc(100% - 10px)"
+                        }}
+                    >
+                        <span
+                            style={{
+                                flex: 1,
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                resize: "none",
+                                color: (value || focused) ? Definitions.TEXT_COLOR : Definitions.PLACEHOLDER_COLOR,
+                                fontSize: DEFAULT_SIZES.MEDIUM_SIZE
+                            }}
+                            onFocus={ () => setFocused(true) }
+                            onBlur={ () => setFocused(false) }
+                        >
+                            <ContentEditable
+                                html={ focused ? value || "" : value || t("table.filter_placeholder") }
+                                onChange={ event => setValue(event.target.value) }
+                                style={{
+                                    outline: "none"
+                                }}
+                            />
+                        </span>
+                        <div
+                            style={{
+                                width: filterHeaderHeight,
+                                height: filterHeaderHeight
+                            }}
+                        >
+                            {
+                                value && 
+                                <FilteredHeaderDeleteButton
+                                    onClick={ () => setValue("") }
+                                />
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    );
+}
+
+const FilteredHeaderDeleteButton = ({ onClick }) => {
+    const [focused, setFocused] = React.useState(false);
+
+    return (
+        <TiDelete
+            style={{
+                cursor: "pointer"
+            }}
+            color={ focused ? Definitions.TEXT_COLOR : Definitions.PLACEHOLDER_COLOR }
+            size={ filterHeaderHeight }
+            onMouseEnter={ () => setFocused(true) }
+            onMouseLeave={ () => setFocused(false) }
+            onClick={ onClick }
+        />
     );
 }
 

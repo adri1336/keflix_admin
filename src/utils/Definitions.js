@@ -8,6 +8,7 @@ export default {
     DARK_TEXT_COLOR: "silver",
     COMPONENT_BG_COLOR: "rgba(128, 128, 128, 0.3)",
     COMPONENT_BORDER_COLOR: "#242424",
+    PLACEHOLDER_COLOR: "rgba(255, 255, 255, 0.3)",
 
     DEFAULT_MARGIN: 20,
     DEFAULT_PADDING: 10,

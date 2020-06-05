@@ -18,6 +18,9 @@
     "sidebar": {
         "logout_button": "Cerrar sesión"
     },
+    "table": {
+        "filter_placeholder": "Filtro"
+    },
     "info": {
         "system": "Sistema",
         "platform": "Plataforma: {{platform}}",
