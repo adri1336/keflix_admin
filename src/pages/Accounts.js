@@ -7,6 +7,7 @@ import Table, { FILTER_DATA_TYPES } from "components/Table";
 import * as Account from "api/Account";
 import { useTranslation } from "react-i18next";
 import { MdPersonAdd } from "react-icons/md";
+import { makeCancelable } from "utils/Functions";
 
 export default () => {
     const authContext = React.useContext(AuthContext);
@@ -15,14 +16,16 @@ export default () => {
 
     React.useEffect(() => {
         if(!data) {
-            (
-                async () => {
-                    const info = await Account.list(authContext);
+            const getDataPromise = makeCancelable(Account.list(authContext));
+            getDataPromise
+                .promise
+                .then(info => {
                     if(info) {
                         setData(info);
                     }
-                }
-            )(); 
+                })
+                .catch(error => { console.log(error) });
+            return () => getDataPromise.cancel();
         }
     }, [data, authContext]);
 

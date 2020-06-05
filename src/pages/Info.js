@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import Spinner from "components/Spinner";
 import Modal from "components/Modal";
 import CircleProgressBar from "components/CircleProgressBar";
+import { makeCancelable } from "utils/Functions";
 
 export default () => {
     const authContext = React.useContext(AuthContext);
@@ -14,14 +15,16 @@ export default () => {
 
     React.useEffect(() => {
         if(!data) {
-            (
-                async () => {
-                    const info = await Info.get(authContext);
+            const getDataPromise = makeCancelable(Info.get(authContext));
+            getDataPromise
+                .promise
+                .then(info => {
                     if(info) {
                         setData(info);
                     }
-                }
-            )(); 
+                })
+                .catch(error => { console.log(error) });
+            return () => getDataPromise.cancel();
         }
     }, [data, authContext]);
 
