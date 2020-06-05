@@ -138,7 +138,7 @@ const TabButton = ({ route }) => {
             style={{
                 display: "flex",
                 borderTop: route.separator ? "1px solid " + Definitions.COMPONENT_BG_COLOR : "0",
-                borderLeft: location.pathname === route.path ? "2px solid " + Definitions.SECONDARY_COLOR : "2px solid transparent",
+                borderLeft: location.pathname === route.path ? "3px solid " + Definitions.SECONDARY_COLOR : "3px solid transparent",
                 flex: 1,
                 alignItems: "center",
                 padding: Definitions.DEFAULT_PADDING,
