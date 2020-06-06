@@ -50,11 +50,17 @@ export default () => {
     }
 
     const login = React.useCallback((accessToken, refreshToken, account, server) => {
+        const tmdb_api_key = localStorage.getItem(STORAGE_KEYS.TMDB_API_KEY);
+        const tmdb_lang = localStorage.getItem(STORAGE_KEYS.TMDB_LANG);
         authContext.setState({
             accessToken: accessToken,
             refreshToken: refreshToken,
             account: account,
-            server: server
+            server: server,
+            tmdb: {
+                api_key: tmdb_api_key,
+                lang: tmdb_lang
+            }
         });
     }, [authContext]);
 

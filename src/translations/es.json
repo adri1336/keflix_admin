@@ -81,6 +81,15 @@
         "tmdb_title": "TMDb",
         "tmdb_api_key": "API Key",
         "tmdb_lang": "Idioma de los datos",
-        "tmdb_check_button": "Comprobar"
+        "edit_title": "Editar",
+        "error_title": "Error",
+        "info_title": "Información",
+        "tmdb_check_button": "Comprobar",
+        "edit_tmdb_api_key": "Introduce la nueva API KEY:",
+        "edit_tmdb_lang": "Introduce el nuevo idioma de los datos, usa el formato ISO 639-1, por ejemplo: es-ES",
+        "close_button": "Cerrar",
+        "update_button": "Actualizar",
+        "successful_tmdb_check": "La clave es válida.",
+        "unsuccessful_tmdb_check": "La clave no es válida."
     }
 }

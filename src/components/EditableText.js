@@ -3,7 +3,7 @@ import Definitions, { DEFAULT_SIZES } from "utils/Definitions";
 import { MdEdit } from "react-icons/md";
 import { useTranslation } from "react-i18next";
 
-export default ({ style, title, editable, value, onClick }) => {
+export default ({ style, title, editable, selectable, value, onClick }) => {
     const { t } = useTranslation();
 
     let isUndefined = false;
@@ -50,7 +50,8 @@ export default ({ style, title, editable, value, onClick }) => {
                         style={{
                             color: isUndefined ? Definitions.PLACEHOLDER_COLOR : Definitions.TEXT_COLOR,
                             fontSize: DEFAULT_SIZES.NORMAL_SIZE,
-                            marginRight: Definitions.DEFAULT_PADDING
+                            marginRight: Definitions.DEFAULT_PADDING,
+                            userSelect: !isUndefined && selectable ? "text" : "none"
                         }}
                     >
                         { value }

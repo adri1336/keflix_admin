@@ -29,5 +29,7 @@ export const DEFAULT_SIZES = {
 export const STORAGE_KEYS = {
     SERVER: "server",
     ACCESS_TOKEN: "access_token",
-    REFRESH_TOKEN: "refresh_token"
+    REFRESH_TOKEN: "refresh_token",
+    TMDB_API_KEY: "tmdb_api_key",
+    TMDB_LANG: "tmdb_lang"
 }
