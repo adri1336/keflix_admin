@@ -231,6 +231,7 @@ export default ({ history, location }) => {
                     <Link
                         to="/accounts"
                         style={{
+                            outline: "none",
                             textDecoration: "none",
                             marginRight: Definitions.DEFAULT_PADDING
                         }}
