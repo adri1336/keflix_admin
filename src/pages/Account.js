@@ -31,6 +31,12 @@ export default ({ history, location }) => {
                 <div>
                     <EditableText
                         style={{ margin: Definitions.DEFAULT_MARGIN }}
+                        editable={ false }
+                        title={ t("account.id") }
+                        value={ account.id }
+                    />
+                    <EditableText
+                        style={{ margin: Definitions.DEFAULT_MARGIN }}
                         title={ t("account.email") }
                         value={ account.email }
                         onClick={ () => setModal({ editAlert: "email" }) }

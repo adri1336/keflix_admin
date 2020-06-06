@@ -47,6 +47,7 @@
     "account": {
         "title": "Cuenta",
         "add_title": "Añadir cuenta",
+        "id": "ID",
         "email": "Correo electrónico",
         "password": "Contraseña",
         "admin": "Administrador",
