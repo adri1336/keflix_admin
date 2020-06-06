@@ -81,18 +81,12 @@ export default ({ history, location }) => {
                         title={ t("account.updated_at") }
                         value={ account.updatedAt }
                     />
-                    <span
-                        style={{
-                            margin: Definitions.DEFAULT_MARGIN,
-                            cursor: "pointer",
-                            color: "orangered",
-                            fontSize: DEFAULT_SIZES.NORMAL_SIZE,
-                            fontWeight: "bold"
-                        }}
+                    <TextButton
+                        title={ t("account.delete_account_button") }
+                        style={{ margin: Definitions.DEFAULT_MARGIN }}
+                        color="red"
                         onClick={ () => setModal({ delete: true }) }
-                    >
-                        { t("account.delete_account_button") }
-                    </span>
+                    />
                 </div>
             );
         }

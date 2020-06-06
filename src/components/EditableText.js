@@ -1,8 +1,17 @@
 import React from "react";
 import Definitions, { DEFAULT_SIZES } from "utils/Definitions";
 import { MdEdit } from "react-icons/md";
+import { useTranslation } from "react-i18next";
 
 export default ({ style, title, editable, value, onClick }) => {
+    const { t } = useTranslation();
+
+    let isUndefined = false;
+    if(!value) {
+        value = t("editable_text.undefined")
+        isUndefined = true;
+    }
+
     if(editable === undefined) {
         editable = true;
     }
@@ -39,7 +48,7 @@ export default ({ style, title, editable, value, onClick }) => {
                 >
                     <span
                         style={{
-                            color: Definitions.TEXT_COLOR,
+                            color: isUndefined ? Definitions.PLACEHOLDER_COLOR : Definitions.TEXT_COLOR,
                             fontSize: DEFAULT_SIZES.NORMAL_SIZE,
                             marginRight: Definitions.DEFAULT_PADDING
                         }}

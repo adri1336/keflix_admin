@@ -5,6 +5,15 @@
         "movies": "Películas",
         "config": "Configuración"
     },
+    "sidebar": {
+        "logout_button": "Cerrar sesión"
+    },
+    "table": {
+        "filter_placeholder": "Filtro"
+    },
+    "editable_text": {
+        "undefined": "sin definir"
+    },
     "login": {
         "server_input": "Servidor",
         "email_input": "Correo electrónico",
@@ -14,12 +23,6 @@
         "title_alert": "Error",
         "message_alert": "No se ha podido iniciar sesión, comprueba que todos los datos sean correctos.",
         "close_button_alert": "Cerrar"
-    },
-    "sidebar": {
-        "logout_button": "Cerrar sesión"
-    },
-    "table": {
-        "filter_placeholder": "Filtro"
     },
     "info": {
         "system": "Sistema",
@@ -73,5 +76,11 @@
         "delete_account_message": "¿Estás seguro que quieres eliminar la cuenta?",
         "delete_button": "Eliminar",
         "unsuccessful_delete": "No se ha podido eliminar la cuenta."
+    },
+    "config": {
+        "tmdb_title": "TMDb",
+        "tmdb_api_key": "API Key",
+        "tmdb_lang": "Idioma de los datos",
+        "tmdb_check_button": "Comprobar"
     }
 }
