@@ -4,6 +4,7 @@ import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { TiDelete } from "react-icons/ti";
 import ContentEditable from "react-contenteditable";
 import { useTranslation } from "react-i18next";
+import { normalizeString } from "utils/Functions";
 
 export const ORDERS = {
     ASC: 0,
@@ -75,7 +76,10 @@ export default ({ data, headersAlign, cellsAlign, headers, onRenderCell, onRowCl
         let filters = {};
         headers.forEach(header => {
             if(header.filter) {
-                filters[header.id] = header.filter;
+                let stringFilter = header.filter.toString();
+                stringFilter = normalizeString(stringFilter).toLowerCase();
+
+                filters[header.id] = stringFilter;
             }
         });
         return filters;
@@ -154,7 +158,9 @@ export default ({ data, headersAlign, cellsAlign, headers, onRenderCell, onRowCl
                                                         const newData = data.filter(item => {
                                                             for(let property in filters) {
                                                                 if(item[property] !== undefined) {
-                                                                    const stringValue = item[property].toString();
+                                                                    let stringValue = item[property].toString();
+                                                                    stringValue = normalizeString(stringValue).toLowerCase();
+
                                                                     if(!stringValue.includes(filters[property])) {
                                                                         return false;
                                                                     }

@@ -36,3 +36,7 @@ export const makeCancelable = (promise) => { //by  istarkov (https://github.com/
         },
     };
 };
+
+export const normalizeString = (string) => { //by Lewis Diamond (https://stackoverflow.com/a/37511463)
+    return string.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+};

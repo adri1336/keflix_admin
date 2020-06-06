@@ -2,6 +2,7 @@
     "app": {
         "main": "Vista general",
         "accounts": "Cuentas",
+        "genres": "Géneros",
         "movies": "Películas",
         "config": "Configuración"
     },
@@ -91,5 +92,13 @@
         "update_button": "Actualizar",
         "successful_tmdb_check": "La clave es válida.",
         "unsuccessful_tmdb_check": "La clave no es válida."
+    },
+    "genres": {
+        "title": "Géneros",
+        "total": "Total: {{total}}",
+        "add_button": "Añadir",
+        "tmdb_sync_button": "Sincronizar géneros de TMDb",
+        "id_header": "Id",
+        "name_header": "Nombre"
     }
 }

@@ -11,11 +11,13 @@ import { useTranslation } from "react-i18next";
 
 import { AiOutlineBarChart } from "react-icons/ai";
 import { MdSupervisorAccount, MdMovie, MdSettings } from "react-icons/md";
+import { FaTheaterMasks } from "react-icons/fa";
 
 import LoginPage from "pages/Login";
 import Sidebar from "components/Sidebar";
 import InfoPage from "pages/Info";
 import AccountsPage from "pages/Accounts";
+import GenresPage from "pages/Genres";
 import MoviesPage from "pages/Movies";
 import ConfigPage from "pages/Config";
 import AccountPage from "pages/Account";
@@ -36,6 +38,12 @@ export default function App() {
 			name: t("app.accounts"),
 			component: AccountsPage,
 			icon: MdSupervisorAccount
+		},
+		{
+			path: "/genres",
+			name: t("app.genres"),
+			component: GenresPage,
+			icon: FaTheaterMasks
 		},
 		{
 			path: "/movies",

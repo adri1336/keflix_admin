@@ -98,8 +98,10 @@ export default ({ history }) => {
                             flexDirection: "row",
                             justifyContent: "flex-end",
                             alignItems: "center",
-                            textDecoration: "none"
+                            textDecoration: "none",
+                            outline: "none"
                         }}
+                        tabIndex={ -1 }
                     >
                         <MdPersonAdd
                             color={ Definitions.SECONDARY_TEXT_COLOR }
