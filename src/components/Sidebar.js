@@ -57,7 +57,11 @@ export default ({ routes, width }) => {
             
             <div>
                 {
-                    routes.map((route) => {
+                    routes.map(route => {
+                        if(route.sidebar !== undefined && !route.sidebar) {
+                            return null;
+                        }
+
                         return (
                             <TabButton
                                 key={ route.path }
@@ -72,7 +76,8 @@ export default ({ routes, width }) => {
                 style={{
                     display: "flex",
                     flexDirection: "row",
-                    justifyContent: "center",
+                    justifyContent: "flex-start",
+                    marginLeft: Definitions.DEFAULT_MARGIN,
                     alignItems: "center",
                     position: "absolute",
                     bottom: 0,
@@ -146,6 +151,7 @@ const TabButton = ({ route }) => {
                 textDecoration: "none",
                 outline: "none"
             }}
+            tabIndex={ -1 }
             onMouseEnter={ () => setFocused(true) }
             onMouseLeave={ () => setFocused(false) }
         >

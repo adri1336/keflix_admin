@@ -1,6 +1,7 @@
 import React from "react";
 import Definitions, { DEFAULT_SIZES } from "utils/Definitions";
 import Button from "components/Button";
+import Input from "components/Input";
 
 export default (props) => {
     const
@@ -8,7 +9,11 @@ export default (props) => {
         textColor = props.textColor || Definitions.TEXT_COLOR,
         title = props.title || null,
         message = props.message || null,
-        buttons = props.buttons;
+        buttons = props.buttons,
+        input = props.input || false,
+        inputType = props.inputType || "text";
+
+    const [inputValue, setInputValue] = React.useState("");
 
     return (
         <div
@@ -46,6 +51,23 @@ export default (props) => {
                 </p>
             }
             {
+                input &&
+                <div
+                    style={{
+                        marginTop: -Definitions.DEFAULT_PADDING,
+                        marginBottom: -Definitions.DEFAULT_PADDING,
+                        marginLeft: -Definitions.DEFAULT_MARGIN,
+                        marginRight: -Definitions.DEFAULT_MARGIN
+                    }}
+                >
+                    <Input
+                        value={ inputValue }
+                        type={ inputType }
+                        onChange={ (event) => setInputValue(event.target.value) }
+                    />
+                </div>
+            }
+            {
                 buttons &&
                 <div
                     style={{
@@ -59,11 +81,15 @@ export default (props) => {
                             <Button
                                 key={ index }
                                 title={ button.title }
-                                style={{ margin: Definitions.DEFAULT_PADDING }}
+                                style={{
+                                    margin: Definitions.DEFAULT_PADDING,
+                                    marginRight: index === buttons.length - 1 ? 0 : Definitions.DEFAULT_PADDING,
+                                    marginBottom: 0
+                                }}
                                 onClick={
                                     () => {
                                         if(props.onButtonClick) {
-                                            props.onButtonClick(button.id, button.title);
+                                            props.onButtonClick(button.id, inputValue);
                                         }
                                     }
                                 }

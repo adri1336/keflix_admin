@@ -18,11 +18,12 @@ import InfoPage from "pages/Info";
 import AccountsPage from "pages/Accounts";
 import MoviesPage from "pages/Movies";
 import ConfigPage from "pages/Config";
+import AccountPage from "pages/Account";
 
 export default function App() {
 	const [state, setState] = React.useState(null);
-
 	const { t } = useTranslation();
+
 	const routes = [
 		{
 			path: "/",
@@ -48,9 +49,13 @@ export default function App() {
 			component: ConfigPage,
 			icon: MdSettings,
 			separator: true
+		},
+		{
+			sidebar: false,
+			path: "/account",
+			component: AccountPage
 		}
 	];
-	const sidebarWidth = 250;
 
 	return (
 		<AuthContext.Provider value={{ state: state, setState: setState }}>
@@ -69,11 +74,11 @@ export default function App() {
 									>
 										<Sidebar
 											routes={ routes }
-											width={ sidebarWidth }
+											width={ Definitions.SIDEBAR_WIDTH }
 										/>
 										<div
 											style={{
-												marginLeft: sidebarWidth,
+												marginLeft: Definitions.SIDEBAR_WIDTH,
 												display: "flex",
 												flex: 1,
 												minHeight: "100vh",

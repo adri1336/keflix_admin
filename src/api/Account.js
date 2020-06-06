@@ -16,3 +16,27 @@ export const list = async (context) => {
     }
     return null;
 };
+
+export const create = async (context, account) => {
+    const [response, data, error] = await apiFetch(context, "/account", "POST", account);
+    if(!error && response.status === 200) {
+        return data;
+    }
+    return null;
+};
+
+export const update = async (context, id, account) => {
+    const [response, data, error] = await apiFetch(context, "/account/" + id, "PUT", account);
+    if(!error && response.status === 200) {
+        return data;
+    }
+    return null;
+};
+
+export const destroy = async (context, id) => {
+    const [response, data, error] = await apiFetch(context, "/account/" + id, "DELETE");
+    if(!error && response.status === 200) {
+        return data;
+    }
+    return false;
+};

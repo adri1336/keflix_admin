@@ -8,8 +8,9 @@ import * as Account from "api/Account";
 import { useTranslation } from "react-i18next";
 import { MdPersonAdd } from "react-icons/md";
 import { makeCancelable } from "utils/Functions";
+import { Link } from "react-router-dom";
 
-export default () => {
+export default ({ history }) => {
     const authContext = React.useContext(AuthContext);
     const [data, setData] = React.useState(null);
     const { t } = useTranslation();
@@ -88,13 +89,16 @@ export default () => {
                     >
                         { t("accounts.total", { total: data?.length }) }
                     </span>
-                    <div
+                    <Link
+                        to={{
+                            pathname: "/account"
+                        }}
                         style={{
                             display: "flex",
                             flexDirection: "row",
                             justifyContent: "flex-end",
                             alignItems: "center",
-                            cursor: "pointer"
+                            textDecoration: "none"
                         }}
                     >
                         <MdPersonAdd
@@ -112,7 +116,7 @@ export default () => {
                         >
                             { t("accounts.add_button") }
                         </span>
-                    </div>
+                    </Link>
                 </div>
                 <Table
                     data={ data }                   
@@ -152,7 +156,7 @@ export default () => {
                     }
                     onRowClick={
                         index => {
-                            console.log("row clicked: ", index);
+                            history.push("/account", { account: data[index] });
                         }
                     }
                 />

@@ -12,7 +12,8 @@ export default {
 
     DEFAULT_MARGIN: 20,
     DEFAULT_PADDING: 10,
-    DEFAULT_BORDER_RADIUS: 2
+    DEFAULT_BORDER_RADIUS: 2,
+    SIDEBAR_WIDTH: 250
 };
 
 export const DEFAULT_SIZES = {
