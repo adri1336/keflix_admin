@@ -151,7 +151,7 @@ export default ({ history, location }) => {
 
     const handleEditAlert = async (property, id, input) => {
         if(id === "update") {
-            const newAccount = Object.create(account);
+            let newAccount = {};
             newAccount[property] = input;
             
             setModal({ loading: true });
