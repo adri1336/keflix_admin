@@ -136,39 +136,43 @@ export default ({ data, headersAlign, cellsAlign, headers, onRenderCell, onRowCl
                                                 header={ header }
                                                 onOrderChange={
                                                     (headerId, order) => {
-                                                        const newData = filteredData.sort((a, b) => {
-                                                            if(a[headerId] < b[headerId]) {
-                                                                return -1;
+                                                        if(data.length > 0) {
+                                                            const newData = filteredData.sort((a, b) => {
+                                                                if(a[headerId] < b[headerId]) {
+                                                                    return -1;
+                                                                }
+                                                                if(a[headerId] > b[headerId] ) {
+                                                                    return 1;
+                                                                }
+                                                                return 0;
+                                                            });
+                                                            if(order === ORDERS.DESC) {
+                                                                newData.reverse();
                                                             }
-                                                            if(a[headerId] > b[headerId] ) {
-                                                                return 1;
-                                                            }
-                                                            return 0;
-                                                        });
-                                                        if(order === ORDERS.DESC) {
-                                                            newData.reverse();
-                                                        }
 
-                                                        setNewData(Object.create(newData));
+                                                            setNewData(Object.create(newData));
+                                                        }
                                                     }
                                                 }
                                                 onFilterRequest={
                                                     () => {
-                                                        const filters = getFilters();
-                                                        const newData = data.filter(item => {
-                                                            for(let property in filters) {
-                                                                if(item[property] !== undefined) {
-                                                                    let stringValue = item[property].toString();
-                                                                    stringValue = normalizeString(stringValue).toLowerCase();
+                                                        if(data.length > 0) {
+                                                            const filters = getFilters();
+                                                            const newData = data.filter(item => {
+                                                                for(let property in filters) {
+                                                                    if(item[property] !== undefined) {
+                                                                        let stringValue = item[property].toString();
+                                                                        stringValue = normalizeString(stringValue).toLowerCase();
 
-                                                                    if(!stringValue.includes(filters[property])) {
-                                                                        return false;
+                                                                        if(!stringValue.includes(filters[property])) {
+                                                                            return false;
+                                                                        }
                                                                     }
                                                                 }
-                                                            }
-                                                            return true;
-                                                        });
-                                                        setNewData(Object.create(newData));
+                                                                return true;
+                                                            });
+                                                            setNewData(Object.create(newData));
+                                                        }
                                                     }
                                                 }
                                             />

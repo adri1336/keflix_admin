@@ -27,6 +27,9 @@ export default ({ history }) => {
                         });
                         setData(info);
                     }
+                    else {
+                        setData({});
+                    }
                 })
                 .catch(error => { console.log(error) });
             return () => getDataPromise.cancel();
@@ -87,7 +90,7 @@ export default ({ history }) => {
                             fontSize: DEFAULT_SIZES.NORMAL_SIZE
                         }}
                     >
-                        { t("accounts.total", { total: data?.length }) }
+                        { t("accounts.total", { total: data?.length || 0 }) }
                     </span>
                     <Link
                         to={{

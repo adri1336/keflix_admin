@@ -124,5 +124,13 @@
         "edit_title": "Editar",
         "edit_name": "Introduce el nuevo nombre del género:",
         "update_button": "Actualizar"
+    },
+    "movies": {
+        "title": "Películas",
+        "total": "Total: {{total}}",
+        "add_button": "Añadir",
+        "id_header": "Id",
+        "title_header": "Título",
+        "published_header": "Publicada"
     }
 }
