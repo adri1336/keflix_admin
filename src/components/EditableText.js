@@ -2,6 +2,7 @@ import React from "react";
 import Definitions, { DEFAULT_SIZES } from "utils/Definitions";
 import { MdEdit } from "react-icons/md";
 import { useTranslation } from "react-i18next";
+import IconButton from "components/IconButton";
 
 export default ({ style, title, editable, selectable, value, onClick }) => {
     const { t } = useTranslation();
@@ -58,7 +59,7 @@ export default ({ style, title, editable, selectable, value, onClick }) => {
                     </span>
                     {
                         editable &&
-                        <EditButtonIcon
+                        <IconButton
                             icon={{ class: MdEdit }}
                             onClick={ onClick }
                         />
@@ -68,20 +69,3 @@ export default ({ style, title, editable, selectable, value, onClick }) => {
         </div>
     );
 };
-
-export const EditButtonIcon = ({ icon, onClick }) => {
-    const [focused, setFocused] = React.useState(false);
-
-    return (
-        <icon.class
-            size={ DEFAULT_SIZES.NORMAL_SIZE }
-            color={ focused ? Definitions.TEXT_COLOR : Definitions.PLACEHOLDER_COLOR }
-            style={{
-                cursor: "pointer"
-            }}
-            onMouseEnter={ () => setFocused(true) }
-            onMouseLeave={ () => setFocused(false) }
-            onClick={ onClick }
-        />
-    );
-}

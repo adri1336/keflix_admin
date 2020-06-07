@@ -8,6 +8,7 @@ import TextButton from "components/TextButton";
 import Input from "components/Input";
 import Button from "components/Button";
 import Checkbox from "components/Checkbox";
+import FileSelector from "components/FileSelector";
 
 export default ({ history, location }) => {
     const authContext = React.useContext(AuthContext);
@@ -92,7 +93,7 @@ export default ({ history, location }) => {
                             <div
                                 style={{
                                     display: "flex",
-                                    flex: 1,
+                                    flex: 2,
                                     flexDirection: "column"
                                 }}
                             >
@@ -188,10 +189,72 @@ export default ({ history, location }) => {
                                 style={{
                                     display: "flex",
                                     flex: 1,
-                                    flexDirection: "column"
+                                    flexDirection: "column",
+                                    marginTop: Definitions.DEFAULT_MARGIN
                                 }}
                             >
-                                <h1>MEDIOS</h1>
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        height: 150,
+                                        marginBottom: Definitions.DEFAULT_MARGIN
+                                    }}
+                                >
+                                    <FileSelector
+                                        title={ t("add_movie.logo") }
+                                        inputProps={{ accept: "image/*" }}
+                                    />
+                                </div>
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        flexDirection: "row",
+                                        height: 150,
+                                        marginBottom: Definitions.DEFAULT_MARGIN
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            width: 100,
+                                            marginRight: Definitions.DEFAULT_PADDING
+                                        }}
+                                    >
+                                        <FileSelector
+                                            title={ t("add_movie.poster") }
+                                            inputProps={{ accept: "image/*" }}
+                                        />
+                                    </div>
+                                    <FileSelector
+                                        title={ t("add_movie.backdrop") }
+                                        inputProps={{ accept: "image/*" }}
+                                    />
+                                </div>
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        flexDirection: "row",
+                                        height: 150,
+                                        marginBottom: Definitions.DEFAULT_MARGIN
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            flex: 1,
+                                            marginRight: Definitions.DEFAULT_PADDING
+                                        }}
+                                    >
+                                        <FileSelector
+                                            title={ t("add_movie.trailer") }
+                                            inputProps={{ accept: "video/*" }}
+                                        />
+                                    </div>
+                                    <FileSelector
+                                        title={ t("add_movie.video") }
+                                        inputProps={{ accept: "video/*" }}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </form>

@@ -146,6 +146,11 @@
         "vote_average": "Puntuación",
         "adult": "Película solo para adultos",
         "published": "Publicar tras finalizar",
+        "logo": "Logo",
+        "poster": "Carátula",
+        "backdrop": "Fondo",
+        "trailer": "Tráiler",
+        "video": "Película",
         "add_button": "Crear"
     }
 }
