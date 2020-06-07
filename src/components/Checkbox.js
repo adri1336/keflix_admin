@@ -6,7 +6,8 @@ export default (props) => {
         <div
             style={{
                 display: "flex",
-                margin: Definitions.DEFAULT_MARGIN
+                margin: Definitions.DEFAULT_MARGIN,
+                ...props.style
             }}
         >
             <label

@@ -91,7 +91,7 @@ export default ({ history }) => {
                     </span>
                     <Link
                         to={{
-                            pathname: "/movie"
+                            pathname: "/movie/add"
                         }}
                         style={{
                             display: "flex",

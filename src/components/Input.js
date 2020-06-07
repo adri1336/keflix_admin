@@ -6,8 +6,10 @@ export default (props) => {
 
     const
         title = props.title || null,
-        type = props.type || "text";
+        type = props.type || "text",
+        textArea = props.textArea !== undefined && props.textArea ? true : false;
     
+    const input = { element: textArea ? TextArea : Input };
     return (
         <div
             style={{
@@ -28,7 +30,7 @@ export default (props) => {
                     { title }
                 </label>
             }
-            <input
+            <input.element
                 style={{
                     ...props.style,
                     backgroundColor: Definitions.COMPONENT_BG_COLOR,
@@ -46,7 +48,25 @@ export default (props) => {
                 required={ props.required || false }
                 onChange={ props.onChange }
                 value={ props.value }
+                { ...props.inputProps }
             />
         </div>
+    );
+}
+
+const Input = (props) => {
+    return <input { ...props }/>
+}
+
+const TextArea = (props) => {
+    return (
+        <textarea
+            { ...props }
+            style={{
+                ...props.style,
+                resize: "vertical"
+            }}
+            rows={ 5 }
+        />
     );
 }

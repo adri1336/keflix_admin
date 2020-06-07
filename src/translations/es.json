@@ -132,5 +132,20 @@
         "id_header": "Id",
         "title_header": "Título",
         "published_header": "Publicada"
+    },
+    "add_movie": {
+        "page_title": "Añadir película",
+        "tmdb_search_button": "Buscar en TMDb",
+        "title": "Título",
+        "original_title": "Título original",
+        "overview": "Descripción",
+        "tagline": "Eslogan o lema",
+        "release_date": "Fecha de lanzamiento",
+        "runtime": "Duración",
+        "popularity": "Popularidad",
+        "vote_average": "Puntuación",
+        "adult": "Película solo para adultos",
+        "published": "Publicar tras finalizar",
+        "add_button": "Crear"
     }
 }
