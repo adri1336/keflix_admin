@@ -141,7 +141,7 @@
         "overview": "Descripción",
         "tagline": "Eslogan o lema",
         "release_date": "Fecha de lanzamiento",
-        "runtime": "Duración",
+        "runtime": "Duración (minutos)",
         "popularity": "Popularidad",
         "vote_average": "Puntuación",
         "adult": "Película solo para adultos",
@@ -151,6 +151,7 @@
         "backdrop": "Fondo",
         "trailer": "Tráiler",
         "video": "Película",
+        "genres": "Géneros",
         "add_button": "Crear"
     }
 }

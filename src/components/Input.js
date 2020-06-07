@@ -15,6 +15,7 @@ export default (props) => {
             style={{
                 display: "flex",
                 flexDirection: "column",
+                flex: 1,
                 margin: Definitions.DEFAULT_MARGIN
             }}
         >

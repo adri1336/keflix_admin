@@ -17,7 +17,8 @@ export default ({ title, inputProps }) => {
                         width: "100%",
                         height: "100%",
                         maxWidth: "100%",
-                        maxHeight: "100%"
+                        maxHeight: "100%",
+                        objectFit: "contain"
                     }}
                 />
             );
@@ -32,7 +33,8 @@ export default ({ title, inputProps }) => {
                         width: "100%",
                         height: "100%",
                         maxWidth: "100%",
-                        maxHeight: "100%"
+                        maxHeight: "100%",
+                        objectFit: "cover"
                     }}
                 />
             );
