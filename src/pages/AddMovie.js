@@ -13,6 +13,7 @@ import Spinner from "components/Spinner";
 import Modal from "components/Modal";
 import { makeCancelable } from "utils/Functions";
 import * as GenreApi from "api/Genre";
+import * as MovieApi from "api/Movie";
 
 export default ({ history, location }) => {
     const authContext = React.useContext(AuthContext);
@@ -190,6 +191,7 @@ export default ({ history, location }) => {
                                                     state.genres.map((genre, index) => {
                                                         return (
                                                             <Checkbox
+                                                                key={ index }
                                                                 title={ genre.name.toUpperCase() }
                                                                 style={{ margin: 0, marginBottom: Definitions.DEFAULT_PADDING / 2 }}
                                                                 checked={ state.formValues.genres[index] || false }
@@ -284,7 +286,19 @@ export default ({ history, location }) => {
                                     >
                                         <FileSelector
                                             title={ t("add_movie.logo") }
-                                            inputProps={{ accept: "image/*" }}
+                                            /*inputProps={{ accept: "image/*" }}*/
+                                            inputProps={{ accept: "*" }}
+                                            onChange={
+                                                async file => {
+                                                    if(file) {
+                                                        console.log("uploading...");
+                                                        const result = await MovieApi.upload(authContext, 1, file, /*"example.png"*/ null, progressEvent => {
+                                                            console.log("progressEvent: ", progressEvent);
+                                                        });
+                                                        console.log("uploaded: ", result);
+                                                    }
+                                                }
+                                            }
                                         />
                                     </div>
                                     <div

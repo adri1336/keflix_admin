@@ -3,7 +3,7 @@ import Definitions, { DEFAULT_SIZES } from "utils/Definitions";
 import IconButton from "components/IconButton";
 import { MdFolder, MdDelete } from "react-icons/md";
 
-export default ({ title, inputProps }) => {
+export default ({ title, inputProps, onChange }) => {
     const
         [file, setFile] = React.useState(null),
         [inputId] = React.useState(Date.now());
@@ -99,14 +99,29 @@ export default ({ title, inputProps }) => {
                     id={ inputId }
                     style={{ display: "none" }}
                     type="file"
-                    onChange={ event => setFile(event.target.files[0]) }
+                    onChange={
+                        event => {
+                            const newFile = event.target.files[0];
+                            setFile(newFile);
+                            if(onChange) {
+                                onChange(newFile);
+                            }
+                        }
+                    }
                     { ...inputProps }
                 />
                 <IconButton
                     icon={{ class: MdDelete }}
-                    onClick={ () => setFile(null) }
+                    onClick={
+                        () => {
+                            setFile(null);
+                            if(onChange) {
+                                onChange(null);
+                            }
+                        }
+                    }
                 />
             </div>
         </div>
     );
-};
+};  
