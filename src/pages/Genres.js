@@ -45,6 +45,9 @@ export default ({ history }) => {
                     if(info) {
                         setState({ data: info });
                     }
+                    else {
+                        setState({ data: {} });
+                    }
                 })
                 .catch(error => { console.log(error) });
             return () => getDataPromise.cancel();
@@ -196,7 +199,7 @@ export default ({ history }) => {
                         }
                         onRowClick={
                             index => {
-                                history.push("/genre", { genre: state.data[index] });
+                                history.replace("/genre", { genre: state.data[index] });
                             }
                         }
                     />

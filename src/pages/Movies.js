@@ -7,6 +7,7 @@ import Table from "components/Table";
 import * as MovieApi from "api/Movie";
 import { useTranslation } from "react-i18next";
 import { BsPlus } from "react-icons/bs";
+import { MdCheck, MdClear } from "react-icons/md";
 import { makeCancelable } from "utils/Functions";
 import { Link } from "react-router-dom";
 
@@ -144,21 +145,41 @@ export default ({ history }) => {
                     ]}
                     onRenderCell={
                         (headerId, index) => {
-                            return (
-                                <span
-                                    style={{
-                                        color: Definitions.DARK_TEXT_COLOR,
-                                        fontSize: DEFAULT_SIZES.NORMAL_SIZE
-                                    }}
-                                >
-                                    { data[index][headerId] }
-                                </span>
-                            );
+                            if(headerId === "published") {
+                                if(data[index][headerId]) {
+                                    return (
+                                        <MdCheck
+                                            color="green"
+                                            size={ DEFAULT_SIZES.NORMAL_SIZE }
+                                        />
+                                    );
+                                }
+                                else {
+                                    return (
+                                        <MdClear
+                                            color="red"
+                                            size={ DEFAULT_SIZES.NORMAL_SIZE }
+                                        />
+                                    );
+                                }
+                            }
+                            else {
+                                return (
+                                    <span
+                                        style={{
+                                            color: Definitions.DARK_TEXT_COLOR,
+                                            fontSize: DEFAULT_SIZES.NORMAL_SIZE
+                                        }}
+                                    >
+                                        { data[index][headerId] }
+                                    </span>
+                                );
+                            }
                         }
                     }
                     onRowClick={
                         index => {
-                            history.push("/movie", { account: data[index] });
+                            history.replace("/movie", { movie: data[index] });
                         }
                     }
                 />

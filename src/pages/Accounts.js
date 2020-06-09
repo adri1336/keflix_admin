@@ -161,7 +161,7 @@ export default ({ history }) => {
                     }
                     onRowClick={
                         index => {
-                            history.push("/account", { account: data[index] });
+                            history.replace("/account", { account: data[index] });
                         }
                     }
                 />
