@@ -113,7 +113,7 @@ export default () => {
             </Modal>
             
             <img
-                src={ require("assets/logo.png") }
+                src={ process.env.PUBLIC_URL + "/assets/logo.png" }
                 style={{
                     width: 200,
                     margin: 20

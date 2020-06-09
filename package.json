@@ -1,6 +1,33 @@
 {
-  "name": "app",
-  "version": "0.1.0",
+  "build": {
+    "appId": "com.adri1336.keflix-admin-panel",
+    "files": [
+      "build/icon.*",
+      "build/installerSidebar.*"
+    ],
+    "directories": {
+      "buildResources": "build"
+    },
+    "mac": {
+      "category": "public.app-category.productivity"
+    },
+    "nsis": {
+      "perMachine": true,
+      "oneClick": false,
+      "createDesktopShortcut": "always"
+    }
+  },
+  "name": "keflix-admin-panel",
+  "version": "1.0.0",
+  "productName": "Keflix Admin Panel",
+  "description": "Keflix Admin Panel",
+  "license": "MIT", 
+  "author": {
+    "name": "https://github.com/adri1336",
+    "email": "adri1pawn@gmail.com",
+    "url": "https://github.com/adri1336"
+  },
+  "repository": "https://github.com/adri1336/keflix_admin",
   "private": true,
   "main": "public/electron.js",
   "dependencies": {
@@ -23,7 +50,10 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "electron-dev": "concurrently \"npm start\" \"wait-on http://localhost:3000 && electron .\""
+    "electron-dev": "concurrently \"npm start\" \"wait-on http://localhost:3000 && electron .\"",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "postinstall": "electron-builder install-app-deps"
   },
   "eslintConfig": {
     "extends": "react-app"

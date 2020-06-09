@@ -3,9 +3,11 @@ import "translations/i18n";
 import {
 	BrowserRouter,
 	Switch,
-	Route
+	Route,
+	Redirect
 } from "react-router-dom";
 import { AuthContext } from "context/Auth";
+import { history } from "context/History";
 import Definitions from "utils/Definitions";
 import { useTranslation } from "react-i18next";
 
@@ -84,7 +86,7 @@ export default function App() {
 					props => {
 						if(props.state?.account) {
 							return (
-								<BrowserRouter>
+								<BrowserRouter history={ history }>
 									<div
 										style={{
 											display: "flex",
@@ -111,6 +113,7 @@ export default function App() {
 														return <Route key={ route.path } exact path={ route.path } component={ route.component }/>;
 													})
 												}
+												<Route render={ () => <Redirect to="/"/> }/>
 											</Switch>
 										</div>
 									</div>
@@ -118,6 +121,7 @@ export default function App() {
 							);
 						}
 						else {
+							history.replace("/");
 							return <LoginPage/>;
 						}
 					}

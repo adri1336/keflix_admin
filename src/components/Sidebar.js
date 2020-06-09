@@ -50,7 +50,7 @@ export default ({ routes, width }) => {
                 }}
             >
                 <img
-                    src={ require("assets/logo.png") }
+                    src={ process.env.PUBLIC_URL + "/assets/logo.png" }
                     style={{ width: "100%" }}
                     alt="logo"
                 />
