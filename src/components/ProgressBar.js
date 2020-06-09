@@ -57,7 +57,7 @@ export default (props) => {
                             fontSize: DEFAULT_SIZES.MEDIUM_SIZE
                         }}
                     >
-                        { progress + "%" }
+                        { progress.toFixed(2) + "%" }
                     </span>  
             }
         </div>

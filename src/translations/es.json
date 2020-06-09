@@ -157,6 +157,15 @@
         "upload_complete_title": "Carga completada",
         "uploading_create_movie": "Crear película",
         "go_back_button": "Volver a películas",
-        "upload_error_message": "Ha ocurrido un error inesperado"
+        "upload_error_message": "Ha ocurrido un error inesperado",
+        "tmdb_search_title": "Buscar película en TMDb",
+        "tmdb_search_message": "Introduce el nombre de la película:",
+        "close_button": "Cerrar",
+        "search_button": "Buscar",
+        "results_title": "Resultados de tu búsqueda",
+        "total": "Total: {{total}}",
+        "title_header": "Título",
+        "release_date_header": "Fecha de lanzamiento",
+        "popularity_header": "Popularidad"
     }
 }

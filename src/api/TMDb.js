@@ -13,3 +13,17 @@ export const genres = async (tmdb) => {
         return null;
     }
 };
+
+export const searchMovies = async (tmdb, search) => {
+    try {
+        const
+            response = await fetch(TMDB_API_URL + "/search/movie?api_key=" + tmdb?.api_key + (tmdb?.lang ? "&language=" + tmdb.lang : "") + "&include_adult=true&query=" + search),
+            { results } = await response.json();
+
+        if(!results) throw new Error("no genres");
+        return results;
+    }
+    catch(error) {
+        return null;
+    }
+};
