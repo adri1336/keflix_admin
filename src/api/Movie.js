@@ -1,6 +1,22 @@
 import { apiFetch } from "api/ApiClient";
 import axios from "axios";
 
+export const create = async (context, movie) => {
+    const [response, data, error] = await apiFetch(context, "/movie", "POST", movie);
+    if(!error && response.status === 200) {
+        return data;
+    }
+    return null;
+};
+
+export const update = async (context, id, movie) => {
+    const [response, data, error] = await apiFetch(context, "/movie/" + id, "PUT", movie);
+    if(!error && response.status === 200) {
+        return data;
+    }
+    return null;
+};
+
 export const get = async (context) => {
     const [response, data, error] = await apiFetch(context, "/movie");
     if(!error && response.status === 200) {
@@ -32,7 +48,6 @@ export const upload = async (context, id, file, fileName = null, onUploadProgres
             options
         )
             .then(response => {
-                console.log("response: ", response);
                 if(response.status === 200) {
                     resolve(true);
                 }

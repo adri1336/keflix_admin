@@ -12,6 +12,7 @@ export default ({ title, inputProps, onChange }) => {
         if(file.type.includes("image")) {
             return (
                 <img
+                    alt="fileSelector"
                     src={ URL.createObjectURL(file) }
                     style={{
                         width: "100%",

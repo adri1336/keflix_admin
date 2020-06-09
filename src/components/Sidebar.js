@@ -4,6 +4,7 @@ import { MdAccountCircle } from "react-icons/md";
 import { AuthContext } from "context/Auth";
 import { useTranslation } from "react-i18next";
 import { useLocation, Link } from "react-router-dom";
+import { clearAuthLocalStorage } from "utils/Functions";
 
 export default ({ routes, width }) => {
     const authContext = React.useContext(AuthContext);
@@ -112,7 +113,7 @@ export default ({ routes, width }) => {
                         }}
                         onClick={
                             () => {
-                                localStorage.clear();
+                                clearAuthLocalStorage();
                                 authContext.setState(null);
                             }
                         }

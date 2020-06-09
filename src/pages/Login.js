@@ -10,6 +10,7 @@ import Alert from "components/Alert";
 import * as Auth from "api/Auth";
 import * as Account from "api/Account";
 import { AuthContext } from "context/Auth";
+import { clearAuthLocalStorage } from "utils/Functions";
 
 export default () => {
     const authContext = React.useContext(AuthContext);
@@ -79,7 +80,7 @@ export default () => {
                         login(accessToken, refreshToken, data, server);
                     }
                     else {
-                        localStorage.clear();
+                        clearAuthLocalStorage();
                         setModal(null);
                     }
                 }

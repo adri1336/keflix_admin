@@ -152,6 +152,11 @@
         "trailer": "Tráiler",
         "video": "Película",
         "genres": "Géneros",
-        "add_button": "Crear"
+        "add_button": "Crear",
+        "uploading_title": "Cargando",
+        "upload_complete_title": "Carga completada",
+        "uploading_create_movie": "Crear película",
+        "go_back_button": "Volver a películas",
+        "upload_error_message": "Ha ocurrido un error inesperado"
     }
 }

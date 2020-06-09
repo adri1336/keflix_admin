@@ -1,3 +1,5 @@
+import { STORAGE_KEYS } from "utils/Definitions";
+
 export const getScrollbarWidth = () => { //by https://stackoverflow.com/a/13382873
     // Creating invisible container
     const outer = document.createElement('div');
@@ -39,4 +41,10 @@ export const makeCancelable = (promise) => { //by  istarkov (https://github.com/
 
 export const normalizeString = (string) => { //by Lewis Diamond (https://stackoverflow.com/a/37511463)
     return string.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+};
+
+export const clearAuthLocalStorage = () => {
+    localStorage.removeItem(STORAGE_KEYS.SERVER);
+    localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
+    localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
 };
