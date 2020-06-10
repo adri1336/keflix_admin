@@ -166,12 +166,17 @@ export default ({ history, location }) => {
                                         style={{
                                             display: "flex",
                                             flex: 1,
+                                            flexDirection: "row",
                                             marginTop: Definitions.DEFAULT_PADDING / 2
                                         }}
                                     >
                                         <Button
+                                            title={ t("movie.undo_button").toUpperCase() }
+                                            onClick={ () => { setState({ ...state, selectedGenres: state.currentGenres.slice(0) }) } }
+                                            style={{ marginRight: Definitions.DEFAULT_PADDING / 2 }}
+                                        />
+                                        <Button
                                             title={ t("movie.update_button").toUpperCase() }
-                                            style={{ flexDirection: "column", width: "100%" }}
                                             onClick={ handleUpdateGenresButton }
                                         />
                                     </div>
