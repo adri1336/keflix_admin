@@ -38,7 +38,13 @@ export default () => {
             
             searching: false,
             searchValue: null,
-            searchData: null
+            searchData: null,
+            
+            selectedMovie: null,
+            youtubeTrailerKey: null,
+            downloading: false,
+            downloadFiles: {},
+            downloadProgress: {}
         });
 
     React.useEffect(() => {
@@ -133,6 +139,119 @@ export default () => {
         }
     }, [state.searching, state.loading, state.searchValue, state.searchData, authContext]);
 
+    React.useEffect(() => {
+        const getMovieNewFormValues = (movie, genres) => {
+            let newFormValues = {
+                title: movie.title || "",
+                original_title: movie.original_title || "",
+                overview: movie.overview || "",
+                genres: genres,
+                tagline: movie.tagline || "",
+                release_date: movie.release_date || "",
+                runtime: movie.runtime || "",
+                popularity: movie.popularity || "",
+                vote_average: movie.vote_average || "",
+                adult: movie.adult || false,
+                published: true
+            };
+            return newFormValues;
+        };
+
+        if(state.selectedMovie && state.loading) {
+            (
+                async () => {
+                    //generos
+                    let selectedMovieGenres = [];
+                    for(let index = 0; index < state.genres.length; index++) {
+                        selectedMovieGenres.push(false);
+                    }
+
+                    const tmdbGenres = await TMDbApi.genres(authContext.state.tmdb);
+                    const movieGenres = state.selectedMovie.genre_ids;
+                    if(tmdbGenres && tmdbGenres.length > 0 && state.genres && state.genres.length > 0) {
+                        for(let index = 0; index < state.genres.length; index++) {
+                            const genre = state.genres[index];
+                            for(let j = 0; j < tmdbGenres.length; j++) {
+                                const tmdbGenre = tmdbGenres[j];
+                                if(tmdbGenre.name === genre.name) {
+                                    for(let x = 0; x < movieGenres.length; x++) {
+                                        const tmdbGenreId = movieGenres[x];
+                                        if(tmdbGenreId === tmdbGenre.id) {
+                                            selectedMovieGenres[index] = true;
+                                            break;
+                                        }
+                                    }
+                                    break;
+                                }   
+                            }
+                        }
+                    }
+
+                    //youtube trailer video
+                    const videoResults = await TMDbApi.getMovieVideos(authContext.state.tmdb, state.selectedMovie.id);
+                    let youtubeKey = null;
+                    if(videoResults && videoResults.length > 0) {
+                        for(let i = 0; i < videoResults.length; i++) {
+                            const result = videoResults[i];
+                            if(result.type && result.site && result.type === "Trailer" && result.site === "YouTube") {
+                                youtubeKey = result.key;
+                                break;
+                            }
+                        }
+                    }
+
+                    //obtener los datos adicionales de la pelicula
+                    let movie = state.selectedMovie;
+                    movie = await TMDbApi.getMovie(authContext.state.tmdb, movie.id);
+
+                    const newFormValues = getMovieNewFormValues(movie, selectedMovieGenres);
+                    if(movie.poster_path || movie.backdrop_path || youtubeKey) {
+                        let newDownloadFiles = {};
+                        if(movie.poster_path) newDownloadFiles.poster = movie.poster_path;
+                        if(movie.backdrop_path) newDownloadFiles.backdrop = movie.backdrop_path;
+                        if(youtubeKey) newDownloadFiles.trailer = youtubeKey;
+
+                        setState(state => ({
+                            ...state,
+                            formValues: newFormValues,
+                            selectedMovie: null,
+                            youtubeTrailerKey: youtubeKey,
+                            downloading: true,
+                            downloadFiles: newDownloadFiles,
+                            downloadProgress: {},
+                            loading: false
+                        }));
+                    }
+                    else {
+                        setState(state => ({
+                            ...state,
+                            formValues: newFormValues,
+                            selectedMovie: null,
+                            youtubeTrailerKey: null,
+                            downloading: false,
+                            downloadProgress: {},
+                            loading: false
+                        }));
+                    }
+                }
+            )();
+        }
+    }, [state.selectedMovie, state.loading, state.genres, authContext]);
+
+    React.useEffect(() => {
+        if(state.downloading) {
+            (
+                async () => {
+                    if(state.downloadFiles.hasOwnProperty("poster")) {
+                        const url = "https://image.tmdb.org/t/p/w200" + state.downloadFiles.poster;
+                        await TMDbApi.downloadImage(url, "poster.png");
+                        console.log("DOWNLAODED");
+                    }
+                }
+            )();
+        }
+    }, [state.downloading, state.downloadFiles]);
+
     const renderPage = () => {
         if(state.loading) {
             return (
@@ -191,6 +310,9 @@ export default () => {
         }
         else if(state.searching) {
             return renderSearching();
+        }
+        else if(state.downloading) {
+            return renderDownloading();
         }
         else {
             return renderForm();
@@ -403,11 +525,82 @@ export default () => {
                         }
                         onRowClick={
                             index => {
-                                
+                                const movie = state.searchData[index];
+                                setState({ ...state, searching: false, searchData: null, searchValue: null, selectedMovie: movie, loading: true });
                             }
                         }
                     />
                 </div>
+            </div>
+        );
+    };
+
+    const renderDownloading = () => {
+        const renderDownloadProgressBars = () => {
+            let items = [];
+            for(const key in state.downloadFiles) {
+                if(state.downloadFiles.hasOwnProperty(key)) {
+                    items.push(
+                        <div
+                            key={ items.length }
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                marginBottom: Definitions.DEFAULT_MARGIN
+                            }}
+                        >
+                            <span
+                                style={{
+                                    color: Definitions.SECONDARY_TEXT_COLOR,
+                                    fontSize: DEFAULT_SIZES.MEDIUM_SIZE,
+                                    fontWeight: "bold",
+                                    marginBottom: Definitions.DEFAULT_PADDING / 2
+                                }}
+                            >
+                                { t("add_movie." + key).toUpperCase() } 
+                            </span>
+                            <ProgressBar
+                                value={ state.downloadProgress[key] || 0 }
+                            />
+                        </div>
+                    );     
+                }
+            }
+
+            return (
+                <div
+                    style={{
+                        display: "flex",
+                        flex: 1,
+                        flexDirection: "column"
+                    }}
+                >
+                    { items }
+                </div>
+            );
+        };
+
+        return (
+            <div
+                style={{
+                    margin: 100,
+                    marginTop: Definitions.DEFAULT_MARGIN,
+                    display: "flex",
+                    flex: 1,
+                    flexDirection: "column",
+                    justifyContent: "center",
+                }}
+            >
+                <span
+                    style={{
+                        color: Definitions.TEXT_COLOR,
+                        fontSize: DEFAULT_SIZES.TITLE_SIZE,
+                        marginBottom: 30
+                    }}
+                >
+                    { t("add_movie.downloading_title") }
+                </span>
+                { renderDownloadProgressBars() }
             </div>
         );
     };
@@ -631,14 +824,14 @@ export default () => {
                                             <Input
                                                 title={ t("add_movie.popularity").toUpperCase() }
                                                 type="number"
-                                                inputProps={{ min: 0, step: "0.01" }}
+                                                inputProps={{ min: 0, step: "0.001" }}
                                                 value={ state.formValues.popularity || "" }
                                                 onChange={ (event) => setState({ ...state, formValues: { ...state.formValues, popularity: event.target.value } }) }
                                             />
                                             <Input
                                                 title={ t("add_movie.vote_average").toUpperCase() }
                                                 type="number"
-                                                inputProps={{ min: 0, max: 10, step: "0.01" }}
+                                                inputProps={{ min: 0, max: 10, step: "0.001" }}
                                                 value={ state.formValues.vote_average || "" }
                                                 onChange={ (event) => setState({ ...state, formValues: { ...state.formValues, vote_average: event.target.value } }) }
                                             />

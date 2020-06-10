@@ -166,6 +166,7 @@
         "total": "Total: {{total}}",
         "title_header": "Título",
         "release_date_header": "Fecha de lanzamiento",
-        "popularity_header": "Popularidad"
+        "popularity_header": "Popularidad",
+        "downloading_title": "Descargando"
     }
 }

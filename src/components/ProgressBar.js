@@ -1,6 +1,6 @@
 import React from "react";
 import Definitions, { DEFAULT_SIZES } from "utils/Definitions";
-import { MdCheck } from "react-icons/md";
+import { MdCheck, MdClear } from "react-icons/md";
 
 export default (props) => {
     const
@@ -45,20 +45,26 @@ export default (props) => {
                 />
             </div>
             {
-                progress >= 100 ?
-                    <MdCheck
-                        color={ Definitions.TEXT_COLOR }
+                progress === -1 ?
+                    <MdClear
+                        color="red"
                         size={ DEFAULT_SIZES.NORMAL_SIZE }
                     />
                 :
-                    <span
-                        style={{
-                            color: Definitions.TEXT_COLOR,
-                            fontSize: DEFAULT_SIZES.MEDIUM_SIZE
-                        }}
-                    >
-                        { progress.toFixed(2) + "%" }
-                    </span>  
+                    progress >= 100 ?
+                        <MdCheck
+                            color="green"
+                            size={ DEFAULT_SIZES.NORMAL_SIZE }
+                        />
+                    :
+                        <span
+                            style={{
+                                color: Definitions.TEXT_COLOR,
+                                fontSize: DEFAULT_SIZES.MEDIUM_SIZE
+                            }}
+                        >
+                            { progress.toFixed(2) + "%" }
+                        </span>  
             }
         </div>
     );
