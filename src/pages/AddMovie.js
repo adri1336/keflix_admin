@@ -11,7 +11,7 @@ import Checkbox from "components/Checkbox";
 import FileSelector from "components/FileSelector";
 import Spinner from "components/Spinner";
 import Modal from "components/Modal";
-import { makeCancelable } from "utils/Functions";
+import { makeCancelable, downloadFile } from "utils/Functions";
 import * as GenreApi from "api/Genre";
 import * as MovieApi from "api/Movie";
 import ProgressBar from "components/ProgressBar";
@@ -242,11 +242,41 @@ export default () => {
         if(state.downloading) {
             (
                 async () => {
-                    if(state.downloadFiles.hasOwnProperty("poster")) {
-                        const url = "https://image.tmdb.org/t/p/w200" + state.downloadFiles.poster;
-                        await TMDbApi.downloadImage(url, "poster.png");
-                        console.log("DOWNLAODED");
+                    for(const key in state.downloadFiles) {
+                        if(state.downloadFiles.hasOwnProperty(key)) {
+                            if(key === "trailer") {
+                            }
+                            else {
+                                const url = "https://image.tmdb.org/t/p/original" + state.downloadFiles[key];
+                        
+                                let path = null;
+                                path = await downloadFile(url, "tmp", key + ".png", status => {
+                                    setState(state => {
+                                        let newDownloadProgress = { ...state.downloadProgress };
+                                        newDownloadProgress[key] = status.percent;
+                                        return { ...state, downloadProgress: newDownloadProgress };
+                                    });
+                                });
+
+                                if(path) {
+                                    const
+                                        response = await fetch("file:///" + path),
+                                        blob = await response.clone().blob(),
+                                        arrayBuffer = await response.clone().arrayBuffer();
+
+                                    const file = new File([arrayBuffer], key + ".png", blob);
+                                    if(file) {
+                                        setState(state => {
+                                            let newFiles = { ...state.formValues.files };
+                                            newFiles[key] = file;
+                                            return { ...state, formValues: { ...state.formValues, files: newFiles } };
+                                        });
+                                    }
+                                }
+                            }
+                        }
                     }
+                    setState(state => ({ ...state, youtubeTrailerKey: null, downloading: false, downloadFiles: {}, downloadProgress: {} }));
                 }
             )();
         }
@@ -493,6 +523,12 @@ export default () => {
                             {
                                 id: "title",
                                 name: t("add_movie.title_header"),
+                                orderable: true,
+                                filterable: true
+                            },
+                            {
+                                id: "original_title",
+                                name: t("add_movie.original_title_header"),
                                 orderable: true,
                                 filterable: true
                             },
@@ -873,6 +909,7 @@ export default () => {
                                             <FileSelector
                                                 title={ t("add_movie.logo") }
                                                 inputProps={{ accept: "image/*" }}
+                                                file={ state.formValues.files.logo }
                                                 onChange={ file => setState({ ...state, formValues: { ...state.formValues, files: { ...state.formValues.files, logo: file } } }) }
                                             />
                                         </div>
@@ -894,12 +931,14 @@ export default () => {
                                                 <FileSelector
                                                     title={ t("add_movie.poster") }
                                                     inputProps={{ accept: "image/*" }}
+                                                    file={ state.formValues.files.poster }
                                                     onChange={ file => setState({ ...state, formValues: { ...state.formValues, files: { ...state.formValues.files, poster: file } } }) }
                                                 />
                                             </div>
                                             <FileSelector
                                                 title={ t("add_movie.backdrop") }
                                                 inputProps={{ accept: "image/*" }}
+                                                file={ state.formValues.files.backdrop }
                                                 onChange={ file => setState({ ...state, formValues: { ...state.formValues, files: { ...state.formValues.files, backdrop: file } } }) }
                                             />
                                         </div>
@@ -921,12 +960,14 @@ export default () => {
                                                 <FileSelector
                                                     title={ t("add_movie.trailer") }
                                                     inputProps={{ accept: "video/*" }}
+                                                    file={ state.formValues.files.trailer }
                                                     onChange={ file => setState({ ...state, formValues: { ...state.formValues, files: { ...state.formValues.files, trailer: file } } }) }
                                                 />
                                             </div>
                                             <FileSelector
                                                 title={ t("add_movie.video") }
                                                 inputProps={{ accept: "video/*" }}
+                                                file={ state.formValues.files.video }
                                                 onChange={ file => setState({ ...state, formValues: { ...state.formValues, files: { ...state.formValues.files, video: file } } }) }
                                             />
                                         </div>

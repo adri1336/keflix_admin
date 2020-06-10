@@ -55,9 +55,3 @@ export const getMovieVideos = async (tmdb, id) => {
         return null;
     }
 };
-
-export const downloadImage = async (url, savePath, onDownloadProgress) => {
-    return new Promise(resolve => {
-        resolve(true);
-    });
-};

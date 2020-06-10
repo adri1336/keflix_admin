@@ -3,17 +3,17 @@ import Definitions, { DEFAULT_SIZES } from "utils/Definitions";
 import IconButton from "components/IconButton";
 import { MdFolder, MdDelete } from "react-icons/md";
 
-export default ({ title, inputProps, onChange }) => {
+export default ({ title, file, inputProps, onChange }) => {
     const
-        [file, setFile] = React.useState(null),
+        [selectedFile, setSelectedFile] = React.useState(file || null),
         [inputId] = React.useState(Date.now());
 
     const renderFile = () => {
-        if(file.type.includes("image")) {
+        if(selectedFile.type.includes("image")) {
             return (
                 <img
                     alt="fileSelector"
-                    src={ URL.createObjectURL(file) }
+                    src={ URL.createObjectURL(selectedFile) }
                     style={{
                         width: "100%",
                         height: "100%",
@@ -24,10 +24,10 @@ export default ({ title, inputProps, onChange }) => {
                 />
             );
         }
-        else if(file.type.includes("video")) {
+        else if(selectedFile.type.includes("video")) {
             return (
                 <video
-                    src={ URL.createObjectURL(file) }
+                    src={ URL.createObjectURL(selectedFile) }
                     controls={ true }
                     autoPlay={ false }
                     style={{
@@ -65,7 +65,7 @@ export default ({ title, inputProps, onChange }) => {
                 }}
             >
                 {
-                    file ?
+                    selectedFile ?
                         renderFile()
                     :
                         <span
@@ -103,7 +103,7 @@ export default ({ title, inputProps, onChange }) => {
                     onChange={
                         event => {
                             const newFile = event.target.files[0];
-                            setFile(newFile);
+                            setSelectedFile(newFile);
                             if(onChange) {
                                 onChange(newFile);
                             }
@@ -115,7 +115,7 @@ export default ({ title, inputProps, onChange }) => {
                     icon={{ class: MdDelete }}
                     onClick={
                         () => {
-                            setFile(null);
+                            setSelectedFile(null);
                             if(onChange) {
                                 onChange(null);
                             }

@@ -165,6 +165,7 @@
         "results_title": "Resultados de tu búsqueda",
         "total": "Total: {{total}}",
         "title_header": "Título",
+        "original_title_header": "Título original",
         "release_date_header": "Fecha de lanzamiento",
         "popularity_header": "Popularidad",
         "downloading_title": "Descargando"

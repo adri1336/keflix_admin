@@ -44,28 +44,35 @@ export default (props) => {
                     }}
                 />
             </div>
-            {
-                progress === -1 ?
-                    <MdClear
-                        color="red"
-                        size={ DEFAULT_SIZES.NORMAL_SIZE }
-                    />
-                :
-                    progress >= 100 ?
-                        <MdCheck
-                            color="green"
+            <div
+                style={{
+                    display: "flex",
+                    width: 50
+                }}
+            >
+                {
+                    progress === -1 ?
+                        <MdClear
+                            color="red"
                             size={ DEFAULT_SIZES.NORMAL_SIZE }
                         />
                     :
-                        <span
-                            style={{
-                                color: Definitions.TEXT_COLOR,
-                                fontSize: DEFAULT_SIZES.MEDIUM_SIZE
-                            }}
-                        >
-                            { progress.toFixed(2) + "%" }
-                        </span>  
-            }
+                        progress >= 100 ?
+                            <MdCheck
+                                color="green"
+                                size={ DEFAULT_SIZES.NORMAL_SIZE }
+                            />
+                        :
+                            <span
+                                style={{
+                                    color: Definitions.TEXT_COLOR,
+                                    fontSize: DEFAULT_SIZES.MEDIUM_SIZE
+                                }}
+                            >
+                                { progress.toFixed(2) + "%" }
+                            </span>  
+                }
+            </div>
         </div>
     );
 };

@@ -1,5 +1,7 @@
 import { STORAGE_KEYS } from "utils/Definitions";
 
+const { ipcRenderer } = window.require("electron");
+
 export const getScrollbarWidth = () => { //by https://stackoverflow.com/a/13382873
     // Creating invisible container
     const outer = document.createElement('div');
@@ -47,4 +49,27 @@ export const clearAuthLocalStorage = () => {
     localStorage.removeItem(STORAGE_KEYS.SERVER);
     localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
     localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
+};
+
+export const downloadFile = (url, directory, fileName, onProgress) => {
+    return new Promise(resolve => {
+        ipcRenderer.send("download-file", {
+            url: url,
+            options: {
+                filename: fileName
+            },
+            directory: directory
+        });
+
+        if(onProgress) {
+            ipcRenderer.on("download-progress", (event, arg) => {
+                arg.percent *= 100.0;
+                onProgress(arg);
+            });
+        }
+
+        ipcRenderer.on("download-file", (event, arg) => {
+            resolve(arg);
+        })
+    });
 };
