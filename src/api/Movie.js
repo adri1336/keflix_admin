@@ -66,3 +66,11 @@ export const upload = async (context, id, file, fileName = null, onUploadProgres
             .catch(() => resolve(false));
     });
 };
+
+export const destroy = async (context, id) => {
+    const [response, data, error] = await apiFetch(context, "/movie/" + id, "DELETE");
+    if(!error && response.status === 200) {
+        return data;
+    }
+    return false;
+};

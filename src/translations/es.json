@@ -206,6 +206,12 @@
         "yes": "Sí",
         "no": "No",
         "created_at": "Fecha de creación",
-        "updated_at": "Fecha de ultima actualización"
+        "updated_at": "Fecha de ultima actualización",
+        "delete_movie_button": "Eliminar película",
+        "delete_title": "Eliminar",
+        "delete_movie_message": "¿Estás seguro que quieres eliminar la película?",
+        "delete_button": "Eliminar",
+        "error_title": "Error",
+        "unsuccessful_delete": "No se ha podido eliminar la película."
     }
 }

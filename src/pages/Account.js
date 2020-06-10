@@ -83,7 +83,7 @@ export default ({ history, location }) => {
                     />
                     <TextButton
                         title={ t("account.delete_account_button") }
-                        style={{ margin: Definitions.DEFAULT_MARGIN }}
+                        style={{ margin: Definitions.DEFAULT_MARGIN, marginBottom: 50 }}
                         color="red"
                         onClick={ () => setModal({ delete: true }) }
                     />

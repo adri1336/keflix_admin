@@ -13,6 +13,7 @@ import * as GenreApi from "api/Genre";
 import { makeCancelable } from "utils/Functions";
 import Checkbox from "components/Checkbox";
 import Button from "components/Button";
+import TextButton from "components/TextButton";
 
 export default ({ history, location }) => {
     const authContext = React.useContext(AuthContext);
@@ -195,7 +196,7 @@ export default ({ history, location }) => {
                                 margin: 0,
                                 padding: 0
                             }}
-                            disabled={ (state.loading || state.updating || state.alert, state.editAlert) ? true : false }
+                            disabled={ (state.loading || state.updating || state.alert || state.editAlert) ? true : false }
                         >
                             <div
                                 style={{
@@ -306,6 +307,12 @@ export default ({ history, location }) => {
                                     title={ t("movie.updated_at") }
                                     value={ movie.updatedAt || "" }
                                 />
+                                <TextButton
+                                    title={ t("movie.delete_movie_button") }
+                                    style={{ margin: Definitions.DEFAULT_MARGIN, marginBottom: 50 }}
+                                    color="red"
+                                    onClick={ () => setState({ ...state, alert: "delete" }) }
+                                />
                             </div>
                         </fieldset>
                     </div>
@@ -373,6 +380,51 @@ export default ({ history, location }) => {
         }
     };
 
+    const renderAlert = () => {
+        const handleDeleteAlert = async id => {
+            if(id === "delete") {
+                setState({ ...state, updating: true, alert: null });
+
+                const result = await MovieApi.destroy(authContext, state.movie.id);
+                if(result) {
+                    history.replace("/movies");
+                }
+                else {
+                    setState({ ...state, updating: false, alert: "unsuccessfulDelete" });
+                }
+            }
+            else {
+                setState({ ...state, alert: null });
+            }
+        };
+
+        switch(state.alert) {
+            case "delete": {
+                return (
+                    <Alert
+                        title={ t("movie.delete_title") }
+                        message={ t("movie.delete_movie_message") }
+                        buttons={ [{ id: "close", title: t("movie.close_button") }, { id: "delete", title: t("movie.delete_button") }] }
+                        onButtonClick={ handleDeleteAlert }
+                    />
+                );
+            }
+            case "unsuccessfulDelete": {
+                return (
+                    <Alert
+                        title={ t("movie.error_title") }
+                        message={ t("movie.unsuccessful_delete") }
+                        buttons={ [{ title: t("movie.close_button") }] }
+                        onButtonClick={ () => setState({ ...state, alert: null }) }
+                    />
+                );
+            }
+            default: {
+                return <div/>;
+            }
+        }
+    };
+
     return (
         <div
             style={{
@@ -396,7 +448,10 @@ export default ({ history, location }) => {
                     }}
                 >
                     { state.updating && <Spinner/> }
-
+                    {
+                        state.alert &&
+                        renderAlert()
+                    }
                     {
                         state.editAlert &&
                         <Alert
