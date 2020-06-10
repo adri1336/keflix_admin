@@ -17,6 +17,7 @@
       "createDesktopShortcut": "always"
     }
   },
+  "homepage": "./",
   "name": "keflix-admin-panel",
   "version": "1.0.0",
   "productName": "Keflix Admin Panel",

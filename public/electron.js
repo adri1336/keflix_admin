@@ -2,15 +2,23 @@ const { app, BrowserWindow, ipcMain } = require("electron");
 const { download } = require("electron-dl");
 const fs = require("fs");
 const youtubedl = require("youtube-dl");
-const { version } = require("../package.json");
+
+const { name, version } = require("../package.json");
+const os = require('os');
+const app_tmpDir = os.tmpdir() + "/" + name;
 
 const path = require("path");
 const isDev = require("electron-is-dev");
+if(!isDev) {
+	youtubedl.setYtdlBinary(
+		youtubedl.getYtdlBinary().replace("app.asar", "app.asar.unpacked")
+	);
+}
 
 let mainWindow;
 
 createWindow = () => {
-	mainWindow = new BrowserWindow({ width: 900, height: 680, webPreferences: {
+	mainWindow = new BrowserWindow({ width: 1000, height: 755, webPreferences: {
 			nodeIntegration: true,
 			webSecurity: false
 		}
@@ -28,15 +36,13 @@ createWindow = () => {
 	});
 
 	ipcMain.on("download-file", (event, data) => {
-		let options = {};
-		options.filename = data.fileName || null;
-		options.onProgress = status => {
-			event.reply("download-file-progress", status);
-		};
-
-		if(data.directory) {
-			options.directory = app.getAppPath() + "/" + data.directory;
-		}
+		let options = {
+			filename: data.fileName || null,
+			onProgress: status => {
+				event.reply("download-file-progress", status);
+			},
+			directory: app_tmpDir
+		}		
 		
 		download(BrowserWindow.getFocusedWindow(), data.url, options)
         	.then(dl => {
@@ -45,8 +51,8 @@ createWindow = () => {
 	});
 
 	ipcMain.on("download-youtube-video", (event, data) => {
-		const fullPath = app.getAppPath() + "/" + data.directory + "/" + data.fileName;
-		const video = youtubedl(data.url, ["--format=18"]);
+		const fullPath = app_tmpDir + "/" + data.fileName;
+		const video = youtubedl(data.url, ["--format=18"], { cwd: app_tmpDir });
 
 		let size = 0;
 		video.on("info", info => {

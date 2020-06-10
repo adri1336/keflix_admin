@@ -6,7 +6,7 @@ import Modal from "components/Modal";
 import Table from "components/Table";
 import * as Account from "api/Account";
 import { useTranslation } from "react-i18next";
-import { MdPersonAdd } from "react-icons/md";
+import { BsPlus } from "react-icons/bs";
 import { makeCancelable } from "utils/Functions";
 import { Link } from "react-router-dom";
 
@@ -106,7 +106,7 @@ export default ({ history }) => {
                         }}
                         tabIndex={ -1 }
                     >
-                        <MdPersonAdd
+                        <BsPlus
                             color={ Definitions.SECONDARY_TEXT_COLOR }
                             size={ DEFAULT_SIZES.BIG_SUBTITLE_SIZE }
                             style={{

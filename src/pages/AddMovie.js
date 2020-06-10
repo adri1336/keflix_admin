@@ -32,6 +32,7 @@ export default () => {
             formValues: null,
             
             uploading: false,
+            uploadFiles: {},
             uploadProgress: {},
             uploadError: false,
             uploadFinished: false,
@@ -87,9 +88,9 @@ export default () => {
                         const id = movie.id;
                         setState(state => ({ ...state, uploadProgress: { ...state.uploadProgress, createMovie: 100 } }));
 
-                        for(const key in state.formValues.files) {
-                            if(state.formValues.files.hasOwnProperty(key)) {
-                                const file = state.formValues.files[key];
+                        for(const key in state.uploadFiles) {
+                            if(state.uploadFiles.hasOwnProperty(key)) {
+                                const file = state.uploadFiles[key];
                                 if(file) {
                                     let extension = ".png";
                                     if(file.type.includes("video")) {
@@ -121,7 +122,7 @@ export default () => {
                 }
             )();
         }
-    }, [state.uploading, state.formValues, state.genres, authContext]);
+    }, [state.uploading, state.uploadFiles, state.formValues, state.genres, authContext]);
 
     React.useEffect(() => {
         if(state.searching && state.loading) {
@@ -246,13 +247,13 @@ export default () => {
                         if(state.downloadFiles.hasOwnProperty(key)) {
                             let path = null;
                             if(key === "trailer") {
-                                path = await downloadYoutubeVideo(state.youtubeTrailerKey, "tmp", "trailer.mp4", progress => {
+                                path = await downloadYoutubeVideo(state.youtubeTrailerKey, "trailer.mp4", progress => {
                                     setState(state => ({ ...state, downloadProgress: { ...state.downloadProgress, trailer: progress } }));
                                 });
                             }
                             else {
                                 const url = "https://image.tmdb.org/t/p/" + (key === "poster" ? "w200" : "original") + state.downloadFiles[key];
-                                path = await downloadFile(url, "tmp", key + ".png", status => {
+                                path = await downloadFile(url, key + ".png", status => {
                                     setState(state => {
                                         let newDownloadProgress = { ...state.downloadProgress };
                                         newDownloadProgress[key] = status.percent;
@@ -379,9 +380,9 @@ export default () => {
                 </div>
             );
 
-            for(const key in state.formValues.files) {
-                if(state.formValues.files.hasOwnProperty(key)) {
-                    const file = state.formValues.files[key];
+            for(const key in state.uploadFiles) {
+                if(state.uploadFiles.hasOwnProperty(key)) {
+                    const file = state.uploadFiles[key];
                     if(file) {
                         items.push(
                             <div
@@ -646,7 +647,14 @@ export default () => {
     const renderForm = () => {
         const handleSubmit = event => {
             event.preventDefault();
-            setState({ ...state, uploading: true, uploadProgress: { createMovie: 0 } });
+            let newUploadFiles = {};
+            if(state.formValues.files.logo) newUploadFiles.logo = state.formValues.files.logo;
+            if(state.formValues.files.poster) newUploadFiles.poster = state.formValues.files.poster;
+            if(state.formValues.files.backdrop) newUploadFiles.backdrop = state.formValues.files.backdrop;
+            if(state.formValues.files.trailer) newUploadFiles.trailer = state.formValues.files.trailer;
+            if(state.formValues.files.video) newUploadFiles.video = state.formValues.files.video;
+
+            setState({ ...state, uploading: true, uploadProgress: { createMovie: 0 }, uploadFiles: newUploadFiles });
         };
 
         const handleTmdbSearchAlert = (id, input) => {
@@ -754,7 +762,7 @@ export default () => {
                                         flex: 1,
                                         flexDirection: "row",
                                         border: 0,
-                                        maxWidth: 800
+                                        maxWidth: 1000
                                     }}
                                 >
                                     <div

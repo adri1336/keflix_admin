@@ -51,12 +51,11 @@ export const clearAuthLocalStorage = () => {
     localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
 };
 
-export const downloadFile = (url, directory, fileName, onProgress) => {
+export const downloadFile = (url, fileName, onProgress) => {
     return new Promise(resolve => {
         ipcRenderer.send("download-file", {
             url: url,
-            fileName: fileName,
-            directory: directory
+            fileName: fileName
         });
 
         if(onProgress) {
@@ -72,12 +71,11 @@ export const downloadFile = (url, directory, fileName, onProgress) => {
     });
 };
 
-export const downloadYoutubeVideo = (id, directory, fileName, onProgress) => {
+export const downloadYoutubeVideo = (id, fileName, onProgress) => {
     return new Promise(resolve => {
         ipcRenderer.send("download-youtube-video", {
             url: "http://www.youtube.com/watch?v=" + id,
-            fileName: fileName,
-            directory: directory
+            fileName: fileName
         });
 
         if(onProgress) {
