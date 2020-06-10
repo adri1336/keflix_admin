@@ -11,7 +11,7 @@ export default (props) => {
         message = props.message || null,
         buttons = props.buttons,
         input = props.input || false,
-        inputType = props.inputType || "text";
+        inputProps = props.inputProps;
 
     const [inputValue, setInputValue] = React.useState("");
 
@@ -61,8 +61,8 @@ export default (props) => {
                     }}
                 >
                     <Input
+                        { ...inputProps }
                         value={ inputValue }
-                        type={ inputType }
                         onChange={ (event) => setInputValue(event.target.value) }
                     />
                 </div>

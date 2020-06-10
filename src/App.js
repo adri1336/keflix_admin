@@ -25,6 +25,7 @@ import ConfigPage from "pages/Config";
 import AccountPage from "pages/Account";
 import GenrePage from "pages/Genre";
 import AddMoviePage from "pages/AddMovie";
+import MoviePage from "pages/Movie";
 
 export default function App() {
 	const [state, setState] = React.useState(null);
@@ -76,6 +77,11 @@ export default function App() {
 			sidebar: false,
 			path: "/movie/add",
 			component: AddMoviePage
+		},
+		{
+			sidebar: false,
+			path: "/movie",
+			component: MoviePage
 		}
 	];
 

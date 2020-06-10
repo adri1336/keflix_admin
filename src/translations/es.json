@@ -169,5 +169,18 @@
         "release_date_header": "Fecha de lanzamiento",
         "popularity_header": "Popularidad",
         "downloading_title": "Descargando"
+    },
+    "movie": {
+        "page_title": "Película",
+        "edit_alert_title": "Editar",
+        "close_button": "Cerrar",
+        "update_button": "Actualizar",
+        "id": "ID",        
+        "title": "Título",
+        "edit_alert_title_message": "Introduce el nuevo título:",
+        "original_title": "Título original",
+        "edit_alert_original_title_message": "Introduce el nuevo título original:",
+        "overview": "Descripción",
+        "edit_alert_overview_message": "Introduce la nueva descripción:"
     }
 }
