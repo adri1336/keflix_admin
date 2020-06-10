@@ -55,20 +55,38 @@ export const downloadFile = (url, directory, fileName, onProgress) => {
     return new Promise(resolve => {
         ipcRenderer.send("download-file", {
             url: url,
-            options: {
-                filename: fileName
-            },
+            fileName: fileName,
             directory: directory
         });
 
         if(onProgress) {
-            ipcRenderer.on("download-progress", (event, arg) => {
+            ipcRenderer.on("download-file-progress", (event, arg) => {
                 arg.percent *= 100.0;
                 onProgress(arg);
             });
         }
 
         ipcRenderer.on("download-file", (event, arg) => {
+            resolve(arg);
+        })
+    });
+};
+
+export const downloadYoutubeVideo = (id, directory, fileName, onProgress) => {
+    return new Promise(resolve => {
+        ipcRenderer.send("download-youtube-video", {
+            url: "http://www.youtube.com/watch?v=" + id,
+            fileName: fileName,
+            directory: directory
+        });
+
+        if(onProgress) {
+            ipcRenderer.on("download-youtube-video-progress", (event, arg) => {
+                onProgress(arg);
+            });
+        }
+
+        ipcRenderer.on("download-youtube-video", (event, arg) => {
             resolve(arg);
         })
     });

@@ -6,6 +6,9 @@ import { useTranslation } from "react-i18next";
 import { useLocation, Link } from "react-router-dom";
 import { clearAuthLocalStorage } from "utils/Functions";
 
+const { ipcRenderer } = window.require("electron");
+const app_version = ipcRenderer.sendSync("get-app-version");
+
 export default ({ routes, width }) => {
     const authContext = React.useContext(AuthContext);
     const { t } = useTranslation();
@@ -36,7 +39,7 @@ export default ({ routes, width }) => {
                         fontSize: DEFAULT_SIZES.MEDIUM_SIZE
                     }}
                 >
-                    { Definitions.APP_VERSION }
+                    { app_version }
                 </span>
             </div>
             <div

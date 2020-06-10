@@ -1,5 +1,4 @@
 export default {
-    APP_VERSION: "1.0.0",
     PRIMARY_COLOR: "#252526",
     SECONDARY_BG_COLOR: "#333333",
     SECONDARY_COLOR: "#B8822F",

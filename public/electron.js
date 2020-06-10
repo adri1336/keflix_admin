@@ -1,6 +1,8 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const { download } = require("electron-dl");
 const fs = require("fs");
+const youtubedl = require("youtube-dl");
+const { version } = require("../package.json");
 
 const path = require("path");
 const isDev = require("electron-is-dev");
@@ -21,22 +23,51 @@ createWindow = () => {
 	}
 	mainWindow.on("closed", () => mainWindow = null);
 
+	ipcMain.on("get-app-version", (event, arg) => {
+		event.returnValue = version;
+	});
+
 	ipcMain.on("download-file", (event, data) => {
-		if(!data.options) {
-			data.options = {};
-		}
+		let options = {};
+		options.filename = data.fileName || null;
+		options.onProgress = status => {
+			event.reply("download-file-progress", status);
+		};
 
 		if(data.directory) {
-			data.options.directory = app.getAppPath() + "/" + data.directory;
+			options.directory = app.getAppPath() + "/" + data.directory;
 		}
-
-		data.options.onProgress = status => {
-			event.reply("download-progress", status);
-		};
-		download(BrowserWindow.getFocusedWindow(), data.url, data.options)
+		
+		download(BrowserWindow.getFocusedWindow(), data.url, options)
         	.then(dl => {
 				event.reply("download-file", dl.getSavePath());
 			});
+	});
+
+	ipcMain.on("download-youtube-video", (event, data) => {
+		const fullPath = app.getAppPath() + "/" + data.directory + "/" + data.fileName;
+		const video = youtubedl(data.url, ["--format=18"]);
+
+		let size = 0;
+		video.on("info", info => {
+			size = info.size;
+			video.pipe(fs.createWriteStream(fullPath));
+		});
+
+		let pos = 0;
+		video.on("data", chunk => {
+			pos += chunk.length;
+			
+			let progress = (pos / size) * 100.0;
+			if(progress < 0) progress = 0;
+			else if(progress > 100) progress = 100;
+
+			event.reply("download-youtube-video-progress", progress);
+		});
+
+		video.on("end", () => {
+			event.reply("download-youtube-video", fullPath);
+		});
 	});
 }
 

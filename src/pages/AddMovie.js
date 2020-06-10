@@ -11,7 +11,7 @@ import Checkbox from "components/Checkbox";
 import FileSelector from "components/FileSelector";
 import Spinner from "components/Spinner";
 import Modal from "components/Modal";
-import { makeCancelable, downloadFile } from "utils/Functions";
+import { makeCancelable, downloadFile, downloadYoutubeVideo } from "utils/Functions";
 import * as GenreApi from "api/Genre";
 import * as MovieApi from "api/Movie";
 import ProgressBar from "components/ProgressBar";
@@ -244,12 +244,14 @@ export default () => {
                 async () => {
                     for(const key in state.downloadFiles) {
                         if(state.downloadFiles.hasOwnProperty(key)) {
+                            let path = null;
                             if(key === "trailer") {
+                                path = await downloadYoutubeVideo(state.youtubeTrailerKey, "tmp", "trailer.mp4", progress => {
+                                    setState(state => ({ ...state, downloadProgress: { ...state.downloadProgress, trailer: progress } }));
+                                });
                             }
                             else {
-                                const url = "https://image.tmdb.org/t/p/original" + state.downloadFiles[key];
-                        
-                                let path = null;
+                                const url = "https://image.tmdb.org/t/p/" + (key === "poster" ? "w200" : "original") + state.downloadFiles[key];
                                 path = await downloadFile(url, "tmp", key + ".png", status => {
                                     setState(state => {
                                         let newDownloadProgress = { ...state.downloadProgress };
@@ -257,21 +259,21 @@ export default () => {
                                         return { ...state, downloadProgress: newDownloadProgress };
                                     });
                                 });
+                            }
 
-                                if(path) {
-                                    const
-                                        response = await fetch("file:///" + path),
-                                        blob = await response.clone().blob(),
-                                        arrayBuffer = await response.clone().arrayBuffer();
+                            if(path) {
+                                const
+                                    response = await fetch("file:///" + path),
+                                    blob = await response.clone().blob(),
+                                    arrayBuffer = await response.clone().arrayBuffer();
 
-                                    const file = new File([arrayBuffer], key + ".png", blob);
-                                    if(file) {
-                                        setState(state => {
-                                            let newFiles = { ...state.formValues.files };
-                                            newFiles[key] = file;
-                                            return { ...state, formValues: { ...state.formValues, files: newFiles } };
-                                        });
-                                    }
+                                const file = new File([arrayBuffer], key + (blob.type.includes("video") ? ".mp4" : ".png"), blob);
+                                if(file) {
+                                    setState(state => {
+                                        let newFiles = { ...state.formValues.files };
+                                        newFiles[key] = file;
+                                        return { ...state, formValues: { ...state.formValues, files: newFiles } };
+                                    });
                                 }
                             }
                         }
@@ -280,7 +282,7 @@ export default () => {
                 }
             )();
         }
-    }, [state.downloading, state.downloadFiles]);
+    }, [state.downloading, state.downloadFiles, state.youtubeTrailerKey]);
 
     const renderPage = () => {
         if(state.loading) {
@@ -959,14 +961,14 @@ export default () => {
                                             >
                                                 <FileSelector
                                                     title={ t("add_movie.trailer") }
-                                                    inputProps={{ accept: "video/*" }}
+                                                    inputProps={{ accept: "video/*,.mkv" }}
                                                     file={ state.formValues.files.trailer }
                                                     onChange={ file => setState({ ...state, formValues: { ...state.formValues, files: { ...state.formValues.files, trailer: file } } }) }
                                                 />
                                             </div>
                                             <FileSelector
                                                 title={ t("add_movie.video") }
-                                                inputProps={{ accept: "video/*" }}
+                                                inputProps={{ accept: "video/*,.mkv" }}
                                                 file={ state.formValues.files.video }
                                                 onChange={ file => setState({ ...state, formValues: { ...state.formValues, files: { ...state.formValues.files, video: file } } }) }
                                             />
