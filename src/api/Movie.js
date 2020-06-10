@@ -17,6 +17,14 @@ export const update = async (context, id, movie) => {
     return null;
 };
 
+export const updateGenres = async (context, id, genres) => {
+    const [response, data, error] = await apiFetch(context, "/movie/" + id + "/genres", "PUT", genres);
+    if(!error && response.status === 200) {
+        return data;
+    }
+    return null;
+};
+
 export const get = async (context) => {
     const [response, data, error] = await apiFetch(context, "/movie");
     if(!error && response.status === 200) {

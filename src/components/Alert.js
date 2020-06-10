@@ -62,6 +62,7 @@ export default (props) => {
                 >
                     <Input
                         { ...inputProps }
+                        inputProps={ inputProps }
                         value={ inputValue }
                         onChange={ (event) => setInputValue(event.target.value) }
                     />

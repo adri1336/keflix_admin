@@ -815,7 +815,7 @@ export default () => {
                                                 </span>
                                                 <div
                                                     style={{
-                                                        height: 200,
+                                                        maxHeight: 200,
                                                         overflow: "auto"
                                                     }}
                                                 >
