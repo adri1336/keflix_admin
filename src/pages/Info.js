@@ -98,7 +98,7 @@ export default () => {
                             fontSize: DEFAULT_SIZES.NORMAL_SIZE,
                         }}
                     >
-                        { t("info.address", { address: authContext?.state.server }) } 
+                        { t("info.address", { address: authContext?.state.server + "/" }) } 
                     </span>
                     <span
                         style={{
