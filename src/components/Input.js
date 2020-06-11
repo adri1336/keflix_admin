@@ -1,9 +1,13 @@
 import React from "react";
 import Definitions, { DEFAULT_SIZES } from "utils/Definitions";
+import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
+import IconButton from "components/IconButton";
 
 export default (props) => {
-    const [focused, setFocused] = React.useState();
-
+    const
+        [focused, setFocused] = React.useState(),
+        [passwordVisible, setPasswordVisible] = React.useState(false);
+    
     const
         title = props.title || null,
         type = props.type || "text",
@@ -31,26 +35,46 @@ export default (props) => {
                     { title }
                 </label>
             }
-            <input.element
+            <div
                 style={{
-                    ...props.style,
+                    display: "flex",
+                    flexDirection: "row",
                     backgroundColor: Definitions.COMPONENT_BG_COLOR,
                     padding: Definitions.DEFAULT_PADDING,
                     outline: "none",
                     border: "1px solid",
                     borderColor: focused ? Definitions.SECONDARY_COLOR : Definitions.COMPONENT_BORDER_COLOR,
-                    color: Definitions.TEXT_COLOR,
                     borderRadius: Definitions.DEFAULT_BORDER_RADIUS,
                     marginTop: 2
                 }}
-                type={ type }
-                onFocus={ () => setFocused(true) }
-                onBlur={ () => setFocused(false) }
-                required={ props.required || false }
-                onChange={ props.onChange }
-                value={ props.value }
-                { ...props.inputProps }
-            />
+            >
+                <input.element
+                    style={{
+                        width: "100%",
+                        color: Definitions.TEXT_COLOR,
+                        backgroundColor: "transparent",
+                        border: 0,
+                        margin: 0,
+                        padding: 0,
+                        outline: "none"
+                    }}
+                    onFocus={ () => setFocused(true) }
+                    onBlur={ () => setFocused(false) }
+                    required={ props.required || false }
+                    onChange={ props.onChange }
+                    value={ props.value }
+                    { ...props.inputProps }
+                    type={ passwordVisible === true ? "text" : type }
+                />
+                {
+                    type === "password" &&
+                    <IconButton
+                        icon={{ class: passwordVisible ? AiFillEyeInvisible : AiFillEye }}
+                        style={{ marginLeft: Definitions.DEFAULT_PADDING / 2 }}
+                        onClick={ () => setPasswordVisible(!passwordVisible) }
+                    />
+                }
+            </div>
         </div>
     );
 }

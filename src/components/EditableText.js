@@ -52,7 +52,7 @@ export default ({ style, title, editable, selectable, value, onClick }) => {
                             color: isUndefined ? Definitions.PLACEHOLDER_COLOR : Definitions.TEXT_COLOR,
                             fontSize: DEFAULT_SIZES.NORMAL_SIZE,
                             marginRight: Definitions.DEFAULT_PADDING,
-                            userSelect: !isUndefined && selectable ? "text" : "none",
+                            userSelect: "text",
                             maxWidth: "90%"
                         }}
                     >

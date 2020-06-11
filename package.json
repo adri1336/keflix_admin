@@ -55,7 +55,7 @@
     "eject": "react-scripts eject",
     "electron-dev": "concurrently \"npm start\" \"wait-on http://localhost:3000 && electron .\"",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder",
+    "dist": "electron-builder --ia32 --x64",
     "postinstall": "electron-builder install-app-deps"
   },
   "eslintConfig": {
