@@ -1,6 +1,6 @@
 {
   "build": {
-    "appId": "com.adri1336.keflix-admin-panel",
+    "appId": "xyz.keflix.keflix-admin-panel",
     "files": [
       "build/icon.*",
       "build/installerSidebar.*"
@@ -29,7 +29,6 @@
     "url": "https://github.com/adri1336"
   },
   "repository": "https://github.com/adri1336/keflix_admin",
-  "private": true,
   "main": "public/electron.js",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
