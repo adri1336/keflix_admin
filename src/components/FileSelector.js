@@ -35,6 +35,7 @@ export default ({ title, file, initial, inputProps, onChange }) => {
                             maxHeight: "100%",
                             objectFit: "contain"
                         }}
+                        tabIndex={ -1 }
                     />
                 );
             }
@@ -51,6 +52,8 @@ export default ({ title, file, initial, inputProps, onChange }) => {
                             maxHeight: "100%",
                             objectFit: "cover"
                         }}
+                        tabIndex={ -1 }
+                        type="video/mp4"
                     />
                 );
             }
@@ -71,6 +74,7 @@ export default ({ title, file, initial, inputProps, onChange }) => {
                         maxHeight: "100%",
                         objectFit: "contain"
                     }}
+                    tabIndex={ -1 }
                 />
             );
         }
@@ -87,6 +91,8 @@ export default ({ title, file, initial, inputProps, onChange }) => {
                         maxHeight: "100%",
                         objectFit: "cover"
                     }}
+                    tabIndex={ -1 }
+                    type="video/mp4"
                 />
             );
         }
