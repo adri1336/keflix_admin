@@ -1,7 +1,7 @@
 import React from "react";
 import "translations/i18n";
 import {
-	BrowserRouter,
+	Router,
 	Switch,
 	Route,
 	Redirect
@@ -92,7 +92,7 @@ export default function App() {
 					props => {
 						if(props.state?.account) {
 							return (
-								<BrowserRouter history={ history }>
+								<Router history={ history }>
 									<div
 										style={{
 											display: "flex",
@@ -123,7 +123,7 @@ export default function App() {
 											</Switch>
 										</div>
 									</div>
-								</BrowserRouter>
+								</Router>
 							);
 						}
 						else {

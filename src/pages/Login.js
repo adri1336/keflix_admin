@@ -27,19 +27,24 @@ export default () => {
         event.preventDefault();
         setModal({ loading: true });
         
+        let fixedServer = server;
+        if(fixedServer.slice(-1) === "/") {
+            fixedServer = fixedServer.slice(0, -1); 
+        }
+
         const account = {
             email: email,
             password: password
         };
-        const data = await Auth.login(server, account);
+        const data = await Auth.login(fixedServer, account);
 
         if(data && data.account.admin) {
             if(remember) {
-                localStorage.setItem(STORAGE_KEYS.SERVER, server);
+                localStorage.setItem(STORAGE_KEYS.SERVER, fixedServer);
                 localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, data.access_token);
                 localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, data.refresh_token);
             }
-            login(data.access_token, data.refresh_token, data.account, server);
+            login(data.access_token, data.refresh_token, data.account, fixedServer);
         }
         else {
             setModal({ alert: t("login.message_alert") });
@@ -75,13 +80,23 @@ export default () => {
             setModal({ loading: true });
             (
                 async () => {
-                    const data = await Account.getPassToken(server, accessToken);
+                    let data = await Account.getPassToken(server, accessToken);
                     if(data) {
                         login(accessToken, refreshToken, data, server);
                     }
                     else {
-                        clearAuthLocalStorage();
-                        setModal(null);
+                        //try refresh token
+                        data = await Auth.token(server, refreshToken);
+                        if(data) {
+                            const { account, access_token, refresh_token } = data;
+                            localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, access_token);
+                            localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refresh_token);
+                            login(access_token, refresh_token, account, server);
+                        }
+                        else {
+                            clearAuthLocalStorage();
+                            setModal(null);
+                        }
                     }
                 }
             )();
