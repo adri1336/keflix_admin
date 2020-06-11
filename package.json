@@ -1,6 +1,6 @@
 {
   "build": {
-    "appId": "xyz.keflix.keflix-admin-panel",
+    "appId": "xyz.keflix.keflix_admin_panel",
     "files": [
       "build/icon.*",
       "build/installerSidebar.*"
