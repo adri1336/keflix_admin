@@ -213,6 +213,16 @@
         "delete_movie_message": "¿Estás seguro que quieres eliminar la película?",
         "delete_button": "Eliminar",
         "error_title": "Error",
-        "unsuccessful_delete": "No se ha podido eliminar la película."
+        "unsuccessful_delete": "No se ha podido eliminar la película.",
+        "logo": "Logo",
+        "poster": "Carátula",
+        "backdrop": "Fondo",
+        "trailer": "Tráiler",
+        "video": "Película",
+        "update_completed_title": "Actualización completada",
+        "updating_title": "Actualizando",
+        "deleting_item": "Eliminando",
+        "uploading_new_item": "Cargando",
+        "go_back_button": "Volver"
     }
 }

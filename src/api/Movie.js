@@ -33,6 +33,14 @@ export const get = async (context) => {
     return null;
 };
 
+export const getMovie = async (context, id) => {
+    const [response, data, error] = await apiFetch(context, "/movie/" + id);
+    if(!error && response.status === 200) {
+        return data;
+    }
+    return null;
+};
+
 export const upload = async (context, id, file, fileName = null, onUploadProgress = null) => {
     const { server, accessToken } = context.state;
 
@@ -67,10 +75,22 @@ export const upload = async (context, id, file, fileName = null, onUploadProgres
     });
 };
 
+export const remove = async (context, id, fileName) => {
+    const [response, data, error] = await apiFetch(context, "/movie/" + id + "/remove", "POST", { fileName: fileName });
+    if(!error && response.status === 200) {
+        return data;
+    }
+    return false;
+};
+
 export const destroy = async (context, id) => {
     const [response, data, error] = await apiFetch(context, "/movie/" + id, "DELETE");
     if(!error && response.status === 200) {
         return data;
     }
     return false;
+};
+
+export const getMediaFile = (context, id, file) => {
+    return context.state.server + "/api/movie/" + id + "/" + file + "?token=" + context.state.accessToken;
 };

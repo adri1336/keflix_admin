@@ -36,17 +36,21 @@ createWindow = () => {
 	});
 
 	ipcMain.on("download-file", (event, data) => {
+		download(BrowserWindow.getFocusedWindow(), data.url, { saveAs: true });
+	});
+
+	ipcMain.on("download-tmp-file", (event, data) => {
 		let options = {
 			filename: data.fileName || null,
 			onProgress: status => {
-				event.reply("download-file-progress", status);
+				event.reply("download-tmp-file-progress", status);
 			},
 			directory: app_tmpDir
 		}		
 		
 		download(BrowserWindow.getFocusedWindow(), data.url, options)
         	.then(dl => {
-				event.reply("download-file", dl.getSavePath());
+				event.reply("download-tmp-file", dl.getSavePath());
 			});
 	});
 

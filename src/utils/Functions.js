@@ -53,19 +53,19 @@ export const clearAuthLocalStorage = () => {
 
 export const downloadFile = (url, fileName, onProgress) => {
     return new Promise(resolve => {
-        ipcRenderer.send("download-file", {
+        ipcRenderer.send("download-tmp-file", {
             url: url,
             fileName: fileName
         });
 
         if(onProgress) {
-            ipcRenderer.on("download-file-progress", (event, arg) => {
+            ipcRenderer.on("download-tmp-file-progress", (event, arg) => {
                 arg.percent *= 100.0;
                 onProgress(arg);
             });
         }
 
-        ipcRenderer.on("download-file", (event, arg) => {
+        ipcRenderer.on("download-tmp-file", (event, arg) => {
             resolve(arg);
         })
     });

@@ -14,6 +14,8 @@ import { makeCancelable } from "utils/Functions";
 import Checkbox from "components/Checkbox";
 import Button from "components/Button";
 import TextButton from "components/TextButton";
+import FileSelector from "components/FileSelector";
+import ProgressBar from "components/ProgressBar";
 
 export default ({ history, location }) => {
     const authContext = React.useContext(AuthContext);
@@ -27,7 +29,15 @@ export default ({ history, location }) => {
         updating: false,
         movie: location.state?.movie || null,
         currentGenres: null,
-        selectedGenres: null
+        selectedGenres: null,
+
+        filesChangedDate: null,
+        filesChanged: {},
+        newFiles: {},
+
+        updatingFiles: false,
+        updatingProgress: {},
+        updateFilesFinished: false
     });
 
     React.useEffect(() => {
@@ -66,6 +76,69 @@ export default ({ history, location }) => {
         }
     }, [state.loading, state.genres, state.movie, authContext]);
 
+    React.useEffect(() => {
+        setState(state => {
+            const { mediaInfo } = state.movie;
+            let newFilesChanged = {};
+
+            for(const key in mediaInfo) {
+                if(mediaInfo.hasOwnProperty(key)) {
+                    newFilesChanged[key] = false;
+                }
+            }
+
+            return { ...state, filesChanged: newFilesChanged, filesChangedDate: Date.now() };
+        });
+    }, [state.movie]);
+
+    React.useEffect(() => {
+        if(state.updatingFiles) {
+            (
+                async () => {
+                    const movieId = state.movie.id;
+                    for(const key in state.filesChanged) {
+                        if(state.filesChanged.hasOwnProperty(key)) {
+                            const changed = state.filesChanged[key];
+                            if(changed) {
+                                const file = state.newFiles[key];
+                                let extension = ".png";
+                                if(key === "trailer" || key === "video") {
+                                    extension = ".mp4";
+                                }
+
+                                if(file) {
+                                    //subir 
+                                    await MovieApi.upload(authContext, movieId, file, key + extension, progressEvent => {
+                                        const { loaded, total } = progressEvent;
+        
+                                        setState(state => {
+                                            let newUpdatingProgress = { ...state.updatingProgress };
+                                            newUpdatingProgress[key] = (loaded * 100) / total;
+                                            return { ...state, updatingProgress: newUpdatingProgress };
+                                        });
+                                    });
+                                }
+                                else {
+                                    //eliminar
+                                    await MovieApi.remove(authContext, movieId, key + extension);
+                                    setState(state => {
+                                        let newUpdatingProgress = { ...state.updatingProgress };
+                                        newUpdatingProgress[key] = 100;
+                                        return { ...state, updatingProgress: newUpdatingProgress };
+                                    });
+                                }
+                            }
+                        }
+                    }
+        
+                    //fin get movie
+                    const newMovie = await MovieApi.getMovie(authContext, movieId);
+                    setState(state => ({ ...state, movie: newMovie, updateFilesFinished: true }));
+                }
+            )();
+        }
+    }, [state.updatingFiles, state.filesChanged, state.newFiles, state.movie.id, authContext]);
+
     const renderPage = () => {
         if(state.loading) {
             return (
@@ -82,11 +155,110 @@ export default ({ history, location }) => {
             );
         }
 
+        if(state.updatingFiles) {
+            const renderProgressBars = () => {
+                let items = [];
+                for(const key in state.updatingProgress) {
+                    if(state.updatingProgress.hasOwnProperty(key)) {
+                        let title = "";
+                        if(state.newFiles[key]) title = t("movie.uploading_new_item").toUpperCase() + " " + t("movie." + key).toUpperCase();
+                        else title = t("movie.deleting_item").toUpperCase() + " " + t("movie." + key).toUpperCase();
+
+                        items.push(
+                            <div
+                                key={ items.length }
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    marginBottom: Definitions.DEFAULT_MARGIN
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: Definitions.SECONDARY_TEXT_COLOR,
+                                        fontSize: DEFAULT_SIZES.MEDIUM_SIZE,
+                                        fontWeight: "bold",
+                                        marginBottom: Definitions.DEFAULT_PADDING / 2
+                                    }}
+                                >
+                                    { title } 
+                                </span>
+                                <ProgressBar
+                                    value={ state.updatingProgress[key] || 0 }
+                                />
+                            </div>
+                        );
+                    }
+                }
+
+                return (
+                    <div
+                        style={{
+                            display: "flex",
+                            flex: 1,
+                            flexDirection: "column"
+                        }}
+                    >
+                        { items }
+                        {
+                            state.updateFilesFinished &&
+                            <Button
+                                title={ t("movie.go_back_button").toUpperCase() }
+                                type="submit"
+                                style={{ marginTop: Definitions.DEFAULT_MARGIN }}
+                                onClick={
+                                    () => {
+                                        setState({ ...state, newFiles: {}, updatingFiles: false, updatingProgress: {}, updateFilesFinished: false });
+                                    }
+                                }
+                            />
+                        }
+                    </div>
+                );
+            };
+
+            return (
+                <div
+                    style={{
+                        margin: 100,
+                        marginTop: Definitions.DEFAULT_MARGIN,
+                        display: "flex",
+                        flex: 1,
+                        flexDirection: "column",
+                        justifyContent: "center",
+                    }}
+                >
+                    <span
+                        style={{
+                            color: Definitions.TEXT_COLOR,
+                            fontSize: DEFAULT_SIZES.TITLE_SIZE,
+                            marginBottom: 30
+                        }}
+                    >
+                        { state.updateFilesFinished ? t("movie.update_completed_title") : t("movie.updating_title") }
+                    </span>
+                    { renderProgressBars() }
+                </div>
+            );
+        }
+
         const renderMovieInfo = () => {
             const genresChanged = () => {
                 if(state.currentGenres && state.selectedGenres && state.currentGenres.length > 0 && state.selectedGenres.length > 0 && state.currentGenres.length === state.selectedGenres.length) {
                     for(let i = 0; i < state.currentGenres.length; i++) {
                         if(state.currentGenres[i] !== state.selectedGenres[i]) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            };
+
+            const filesChanged = () => {
+                for(const key in state.filesChanged) {
+                    if(state.filesChanged.hasOwnProperty(key)) {
+                        const changed = state.filesChanged[key];
+                        if(changed) {
                             return true;
                         }
                     }
@@ -184,28 +356,43 @@ export default ({ history, location }) => {
                             </div>
                         );
                     }
-                }
+                };
+
+                const handleUpdateFilesButton = () => {
+                    let newUpdatingProgress = [];
+                    for(const key in state.filesChanged) {
+                        if(state.filesChanged.hasOwnProperty(key)) {
+                            const changed = state.filesChanged[key];
+                            if(changed) {
+                                newUpdatingProgress[key] = 0;
+                            }
+                        }
+                    }
+                    setState({ ...state, updatingFiles: true, updatingProgress: newUpdatingProgress });
+                };
 
                 return (
-                    <div
+                    <fieldset
                         style={{
                             display: "flex",
-                            flexDirection:"row"
+                            flex: 1,
+                            border: 0,
+                            margin: 0,
+                            padding: 0
                         }}
+                        disabled={ (state.loading || state.updating || state.alert || state.editAlert) ? true : false }
                     >
-                        <fieldset
+                        <div
                             style={{
                                 display: "flex",
-                                flex: 1,
-                                border: 0,
-                                margin: 0,
-                                padding: 0
+                                flexDirection:"row",
+                                maxWidth: 1000
                             }}
-                            disabled={ (state.loading || state.updating || state.alert || state.editAlert) ? true : false }
                         >
                             <div
                                 style={{
                                     display: "flex",
+                                    flex: 1,
                                     flexDirection:"column"
                                 }}
                             >
@@ -319,8 +506,139 @@ export default ({ history, location }) => {
                                     onClick={ () => setState({ ...state, alert: "delete" }) }
                                 />
                             </div>
-                        </fieldset>
-                    </div>
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: 1,
+                                    flexDirection:"column"
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        height: 150,
+                                        marginBottom: Definitions.DEFAULT_MARGIN
+                                    }}
+                                >
+                                    <FileSelector
+                                        title={ t("movie.logo") }
+                                        inputProps={{ accept: "image/*" }}
+                                        initial={{
+                                            url: movie.mediaInfo.logo ? MovieApi.getMediaFile(authContext, movie.id, "logo.png") : null,
+                                            type: "image",
+                                            date: state.filesChangedDate
+                                        }}
+                                        onChange={ file => setState({ ...state, newFiles: { ...state.newFiles, logo: file }, filesChanged: { ...state.filesChanged, logo: true } }) }
+                                    />
+                                </div>
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        flexDirection: "row",
+                                        height: 150,
+                                        marginBottom: Definitions.DEFAULT_MARGIN
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            width: 100,
+                                            marginRight: Definitions.DEFAULT_PADDING
+                                        }}
+                                    >
+                                        <FileSelector
+                                            title={ t("movie.poster") }
+                                            inputProps={{ accept: "image/*" }}
+                                            initial={{
+                                                url: movie.mediaInfo.poster ? MovieApi.getMediaFile(authContext, movie.id, "poster.png") : null,
+                                                type: "image",
+                                                date: state.filesChangedDate
+                                            }}
+                                            onChange={ file => setState({ ...state, newFiles: { ...state.newFiles, poster: file }, filesChanged: { ...state.filesChanged, poster: true } }) }
+                                        />
+                                    </div>
+                                    <FileSelector
+                                        title={ t("movie.backdrop") }
+                                        inputProps={{ accept: "image/*" }}
+                                        initial={{
+                                            url: movie.mediaInfo.backdrop ? MovieApi.getMediaFile(authContext, movie.id, "backdrop.png") : null,
+                                            type: "image",
+                                            date: state.filesChangedDate
+                                        }}
+                                        onChange={ file => setState({ ...state, newFiles: { ...state.newFiles, backdrop: file }, filesChanged: { ...state.filesChanged, backdrop: true } }) }
+                                    />
+                                </div>
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        flexDirection: "row",
+                                        height: 150,
+                                        marginBottom: Definitions.DEFAULT_MARGIN
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            flex: 1,
+                                            marginRight: Definitions.DEFAULT_PADDING
+                                        }}
+                                    >
+                                        <FileSelector
+                                            title={ t("movie.trailer") }
+                                            inputProps={{ accept: "video/*,.mkv" }}
+                                            initial={{
+                                                url: movie.mediaInfo.trailer ? MovieApi.getMediaFile(authContext, movie.id, "trailer.mp4") : null,
+                                                type: "video",
+                                                date: state.filesChangedDate
+                                            }}
+                                            onChange={ file => setState({ ...state, newFiles: { ...state.newFiles, trailer: file }, filesChanged: { ...state.filesChanged, trailer: true } }) }
+                                        />
+                                    </div>
+                                    <FileSelector
+                                        title={ t("movie.video") }
+                                        inputProps={{ accept: "video/*,.mkv" }}
+                                        initial={{
+                                            url: movie.mediaInfo.video ? MovieApi.getMediaFile(authContext, movie.id, "video.mp4") : null,
+                                            type: "video",
+                                            date: state.filesChangedDate
+                                        }}
+                                        onChange={ file => setState({ ...state, newFiles: { ...state.newFiles, video: file }, filesChanged: { ...state.filesChanged, video: true } }) }
+                                    />
+                                </div>
+                                {
+                                    filesChanged() &&
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            flexDirection: "row",
+                                            marginTop: Definitions.DEFAULT_PADDING / 2
+                                        }}
+                                    >
+                                        <Button
+                                            title={ t("movie.undo_button").toUpperCase() }
+                                            onClick={ 
+                                                () => {
+                                                    let newFilesChanged = [];
+
+                                                    for(const key in state.movie.mediaInfo) {
+                                                        if(state.movie.mediaInfo.hasOwnProperty(key)) {
+                                                            newFilesChanged[key] = false;
+                                                        }
+                                                    }
+                                                    setState({ ...state, newFiles: {}, filesChanged: newFilesChanged, filesChangedDate: Date.now() });
+                                                }
+                                            }
+                                            style={{ marginRight: Definitions.DEFAULT_PADDING / 2 }}
+                                        />
+                                        <Button
+                                            title={ t("movie.update_button").toUpperCase() }
+                                            onClick={ handleUpdateFilesButton }
+                                        />
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </fieldset>
                 );
             }
         };

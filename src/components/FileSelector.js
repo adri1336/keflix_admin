@@ -1,14 +1,64 @@
 import React from "react";
 import Definitions, { DEFAULT_SIZES } from "utils/Definitions";
 import IconButton from "components/IconButton";
-import { MdFolder, MdDelete } from "react-icons/md";
+import { MdFileDownload, MdFolder, MdDelete } from "react-icons/md";
 
-export default ({ title, file, inputProps, onChange }) => {
+const { ipcRenderer } = window.require("electron");
+
+export default ({ title, file, initial, inputProps, onChange }) => {
     const
         [selectedFile, setSelectedFile] = React.useState(file || null),
         [inputId] = React.useState(Date.now());
+    
+    const [initialInfo, setInitialInfo] = React.useState(initial || null);
+    if(initialInfo && initialInfo.hasOwnProperty("date")) {
+        React.useEffect(() => {
+            if(initial.hasOwnProperty("date") && initial.date !== initialInfo.date) {
+                setInitialInfo(initial);
+                setSelectedFile(null);
+            }
+        }, [initial, initialInfo.date]);
+    }
 
     const renderFile = () => {
+        if(!selectedFile && initialInfo) {
+            const { url, type } = initialInfo;
+            if(type.includes("image")) {
+                return (
+                    <img
+                        alt="fileSelector"
+                        src={ url }
+                        style={{
+                            width: "100%",
+                            height: "100%",
+                            maxWidth: "100%",
+                            maxHeight: "100%",
+                            objectFit: "contain"
+                        }}
+                    />
+                );
+            }
+            else if(type.includes("video")) {
+                return (
+                    <video
+                        src={ url }
+                        controls={ true }
+                        autoPlay={ false }
+                        style={{
+                            width: "100%",
+                            height: "100%",
+                            maxWidth: "100%",
+                            maxHeight: "100%",
+                            objectFit: "cover"
+                        }}
+                    />
+                );
+            }
+            else {
+                return <div/>;
+            }
+        }
+
         if(selectedFile.type.includes("image")) {
             return (
                 <img
@@ -65,7 +115,7 @@ export default ({ title, file, inputProps, onChange }) => {
                 }}
             >
                 {
-                    selectedFile ?
+                    (selectedFile || (initialInfo && initialInfo.url)) ?
                         renderFile()
                     :
                         <span
@@ -87,6 +137,20 @@ export default ({ title, file, inputProps, onChange }) => {
                     marginTop: Definitions.DEFAULT_PADDING / 2
                 }}
             >
+                {
+                    (!selectedFile && initialInfo && initialInfo.url) &&
+                    <IconButton
+                        icon={{ class: MdFileDownload }}
+                        style={{ marginRight: Definitions.DEFAULT_PADDING / 2 }}
+                        onClick={
+                            () => {
+                                ipcRenderer.send("download-file", {
+                                    url: initialInfo.url
+                                });                    
+                            }
+                        }
+                    />
+                }
                 <label
                     htmlFor={ inputId }
                     style={{ display: "flex" }}
@@ -115,9 +179,17 @@ export default ({ title, file, inputProps, onChange }) => {
                     icon={{ class: MdDelete }}
                     onClick={
                         () => {
-                            setSelectedFile(null);
-                            if(onChange) {
-                                onChange(null);
+                            if(initialInfo && initialInfo.url !== null) {
+                                setInitialInfo({ ...initialInfo, url: null });
+                                if(onChange) {
+                                    onChange(null);
+                                }
+                            }
+                            else if(selectedFile !== null) {
+                                setSelectedFile(null);
+                                if(onChange) {
+                                    onChange(null);
+                                }
                             }
                         }
                     }
