@@ -92,7 +92,7 @@ export default ({ history, location }) => {
     }, [state.movie]);
 
     React.useEffect(() => {
-        if(state.updatingFiles) {
+        if(state.updatingFiles && !state.updateFilesFinished) {
             (
                 async () => {
                     const movieId = state.movie.id;
@@ -137,7 +137,7 @@ export default ({ history, location }) => {
                 }
             )();
         }
-    }, [state.updatingFiles, state.filesChanged, state.newFiles, state.movie.id, authContext]);
+    }, [state.updatingFiles, state.updateFilesFinished, state.filesChanged, state.newFiles, state.movie.id, authContext]);
 
     const renderPage = () => {
         if(state.loading) {
