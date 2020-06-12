@@ -5,12 +5,11 @@ import { MdFileDownload, MdFolder, MdDelete } from "react-icons/md";
 
 const { ipcRenderer } = window.require("electron");
 
-export default ({ title, file, initial, inputProps, onChange }) => {
+export default ({ inputId, title, file, initial, inputProps, onChange }) => {
     const
         [selectedFile, setSelectedFile] = React.useState(file || null),
-        [inputId] = React.useState(Date.now());
-    
-    const [initialInfo, setInitialInfo] = React.useState(initial || null);
+        [initialInfo, setInitialInfo] = React.useState(initial || null);
+
     if(initialInfo && initialInfo.hasOwnProperty("date")) {
         React.useEffect(() => {
             if(initial.hasOwnProperty("date") && initial.date !== initialInfo.date) {

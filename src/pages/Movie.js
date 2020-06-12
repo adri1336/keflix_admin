@@ -521,6 +521,7 @@ export default ({ history, location }) => {
                                     }}
                                 >
                                     <FileSelector
+                                        inputId="logo"
                                         title={ t("movie.logo") }
                                         inputProps={{ accept: "image/*" }}
                                         initial={{
@@ -547,6 +548,7 @@ export default ({ history, location }) => {
                                         }}
                                     >
                                         <FileSelector
+                                            inputId="poster"
                                             title={ t("movie.poster") }
                                             inputProps={{ accept: "image/*" }}
                                             initial={{
@@ -558,6 +560,7 @@ export default ({ history, location }) => {
                                         />
                                     </div>
                                     <FileSelector
+                                        inputId="backdrop"
                                         title={ t("movie.backdrop") }
                                         inputProps={{ accept: "image/*" }}
                                         initial={{
@@ -584,6 +587,7 @@ export default ({ history, location }) => {
                                         }}
                                     >
                                         <FileSelector
+                                            inputId="trailer"
                                             title={ t("movie.trailer") }
                                             inputProps={{ accept: "video/*,.mkv" }}
                                             initial={{
@@ -595,6 +599,7 @@ export default ({ history, location }) => {
                                         />
                                     </div>
                                     <FileSelector
+                                        inputId="video"
                                         title={ t("movie.video") }
                                         inputProps={{ accept: "video/*,.mkv" }}
                                         initial={{

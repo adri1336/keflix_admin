@@ -917,6 +917,7 @@ export default () => {
                                             }}
                                         >
                                             <FileSelector
+                                                inputId="logo"
                                                 title={ t("add_movie.logo") }
                                                 inputProps={{ accept: "image/*" }}
                                                 file={ state.formValues.files.logo }
@@ -939,6 +940,7 @@ export default () => {
                                                 }}
                                             >
                                                 <FileSelector
+                                                    inputId="poster"
                                                     title={ t("add_movie.poster") }
                                                     inputProps={{ accept: "image/*" }}
                                                     file={ state.formValues.files.poster }
@@ -946,6 +948,7 @@ export default () => {
                                                 />
                                             </div>
                                             <FileSelector
+                                                inputId="backdrop"
                                                 title={ t("add_movie.backdrop") }
                                                 inputProps={{ accept: "image/*" }}
                                                 file={ state.formValues.files.backdrop }
@@ -968,6 +971,7 @@ export default () => {
                                                 }}
                                             >
                                                 <FileSelector
+                                                    inputId="trailer"
                                                     title={ t("add_movie.trailer") }
                                                     inputProps={{ accept: "video/*,.mkv" }}
                                                     file={ state.formValues.files.trailer }
@@ -975,6 +979,7 @@ export default () => {
                                                 />
                                             </div>
                                             <FileSelector
+                                                inputId="video"
                                                 title={ t("add_movie.video") }
                                                 inputProps={{ accept: "video/*,.mkv" }}
                                                 file={ state.formValues.files.video }
