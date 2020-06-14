@@ -13,15 +13,14 @@ export default (props) => {
         input = props.input || false,
         inputProps = props.inputProps;
 
-    const [inputValue, setInputValue] = React.useState("");
+    const [inputValue, setInputValue] = React.useState(props.inputValue || "");
 
     return (
         <div
             style={{
                 minWidth: 300,
-                maxWidth: 400,
+                maxWidth: 500,
                 minHeight: 100,
-                maxHeight: 200,
                 borderRadius: Definitions.DEFAULT_BORDER_RADIUS,
                 backgroundColor: bgColor,
                 padding: Definitions.DEFAULT_MARGIN
@@ -61,6 +60,7 @@ export default (props) => {
                     }}
                 >
                     <Input
+                        textArea={ props.textArea || false }
                         { ...inputProps }
                         inputProps={ inputProps }
                         value={ inputValue }

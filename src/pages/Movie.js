@@ -406,50 +406,50 @@ export default ({ history, location }) => {
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
                                     title={ t("movie.title") }
                                     value={ movie.title || "" }
-                                    onClick={ () => setState({ ...state, editAlert: { property: "title", inputProps: { type: "text", maxLength: 128 } } }) }
+                                    onClick={ () => setState({ ...state, editAlert: { property: "title", inputValue: movie.title || "",  inputProps: { type: "text", maxLength: 128 } } }) }
                                 />
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
                                     title={ t("movie.original_title") }
                                     value={ movie.original_title || "" }
-                                    onClick={ () => setState({ ...state, editAlert: { property: "original_title", inputProps: { type: "text", maxLength: 128 } } }) }
+                                    onClick={ () => setState({ ...state, editAlert: { property: "original_title", inputValue: movie.original_title || "", inputProps: { type: "text", maxLength: 128 } } }) }
                                 />
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
                                     title={ t("movie.overview") }
                                     value={ movie.overview || "" }
-                                    onClick={ () => setState({ ...state, editAlert: { property: "overview", inputProps: { type: "text", maxLength: 1024 } } }) }
+                                    onClick={ () => setState({ ...state, editAlert: { property: "overview", textArea: true, inputValue: movie.overview || "", inputProps: { type: "text", maxLength: 1024 } } }) }
                                 />
                                 { renderMovieGenres() }
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
                                     title={ t("movie.tagline") }
                                     value={ movie.tagline || "" }
-                                    onClick={ () => setState({ ...state, editAlert: { property: "tagline", inputProps: { type: "text", maxLength: 128 } } }) }
+                                    onClick={ () => setState({ ...state, editAlert: { property: "tagline", inputValue: movie.tagline || "", inputProps: { type: "text", maxLength: 128 } } }) }
                                 />
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
                                     title={ t("movie.release_date") }
                                     value={ movie.release_date || "" }
-                                    onClick={ () => setState({ ...state, editAlert: { property: "release_date", inputProps: { type: "date" } } }) }
+                                    onClick={ () => setState({ ...state, editAlert: { property: "release_date", inputValue: movie.release_date ? ( new Date(movie.release_date).toISOString().split("T")[0] ) : "", inputProps: { type: "date" } } }) }
                                 />
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
                                     title={ t("movie.runtime") }
                                     value={ movie.runtime || "" }
-                                    onClick={ () => setState({ ...state, editAlert: { property: "runtime", inputProps: { type: "number", min: 0 } } }) }
+                                    onClick={ () => setState({ ...state, editAlert: { property: "runtime", inputValue: movie.runtime || "", inputProps: { type: "number", min: 0 } } }) }
                                 />
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
                                     title={ t("movie.popularity") }
                                     value={ movie.popularity || "" }
-                                    onClick={ () => setState({ ...state, editAlert: { property: "popularity", inputProps: { type: "number", min: 0, step: "0.001" } } }) }
+                                    onClick={ () => setState({ ...state, editAlert: { property: "popularity", inputValue: movie.popularity || "", inputProps: { type: "number", min: 0, step: "0.001" } } }) }
                                 />
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
                                     title={ t("movie.vote_average") }
                                     value={ movie.vote_average || "" }
-                                    onClick={ () => setState({ ...state, editAlert: { property: "vote_average", inputProps: { type: "number", min: 0, max: 10, step: "0.001" } } }) }
+                                    onClick={ () => setState({ ...state, editAlert: { property: "vote_average", inputValue: movie.vote_average || "", inputProps: { type: "number", min: 0, max: 10, step: "0.001" } } }) }
                                 />
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
@@ -467,25 +467,25 @@ export default ({ history, location }) => {
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
                                     title={ t("movie.total_views") }
                                     value={ movie.total_views.toString() }
-                                    onClick={ () => setState({ ...state, editAlert: { property: "total_views", inputProps: { type: "number", min: 0 } } }) }
+                                    onClick={ () => setState({ ...state, editAlert: { property: "total_views", inputValue: movie.total_views.toString() || "", inputProps: { type: "number", min: 0 } } }) }
                                 />
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
                                     title={ t("movie.views_last_month") }
                                     value={ movie.views_last_month.toString() }
-                                    onClick={ () => setState({ ...state, editAlert: { property: "views_last_month", inputProps: { type: "number", min: 0 } } }) }
+                                    onClick={ () => setState({ ...state, editAlert: { property: "views_last_month", inputValue: movie.views_last_month.toString() || "", inputProps: { type: "number", min: 0 } } }) }
                                 />
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
                                     title={ t("movie.views_last_week") }
                                     value={ movie.views_last_week.toString() }
-                                    onClick={ () => setState({ ...state, editAlert: { property: "views_last_week", inputProps: { type: "number", min: 0 } } }) }
+                                    onClick={ () => setState({ ...state, editAlert: { property: "views_last_week", inputValue: movie.views_last_week.toString() || "", inputProps: { type: "number", min: 0 } } }) }
                                 />
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
                                     title={ t("movie.views_today") }
                                     value={ movie.views_today.toString() }
-                                    onClick={ () => setState({ ...state, editAlert: { property: "views_today", inputProps: { type: "number", min: 0 } } }) }
+                                    onClick={ () => setState({ ...state, editAlert: { property: "views_today", inputValue: movie.views_today.toString() || "", inputProps: { type: "number", min: 0 } } }) }
                                 />
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
@@ -784,6 +784,8 @@ export default ({ history, location }) => {
                         state.editAlert &&
                         <Alert
                             input
+                            textArea={ state.editAlert.textArea || false }
+                            inputValue={ state.editAlert.inputValue }
                             inputProps={ state.editAlert.inputProps }
                             title={ t("movie.edit_alert_title") }
                             message={ t("movie.edit_alert_" + state.editAlert.property + "_message") }

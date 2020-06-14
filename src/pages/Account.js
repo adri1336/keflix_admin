@@ -39,7 +39,7 @@ export default ({ history, location }) => {
                         style={{ margin: Definitions.DEFAULT_MARGIN }}
                         title={ t("account.email") }
                         value={ account.email }
-                        onClick={ () => setModal({ editAlert: "email" }) }
+                        onClick={ () => setModal({ editAlert: { property: "email", inputValue: account.email || "", inputProps: { type: "text", maxLength: 64 } } }) }
                     />
                     <div
                         style={{
@@ -60,7 +60,7 @@ export default ({ history, location }) => {
                         </span>
                         <TextButton
                             title={ t("account.change_password_button") }
-                            onClick={ () => setModal({ editAlert: "password" }) }
+                            onClick={ () => setModal({ editAlert: { property: "password", inputProps: { type: "password" } } }) }
                         />
                     </div>
                     <EditableText
@@ -125,6 +125,7 @@ export default ({ history, location }) => {
                             type="email"
                             value={ email }
                             onChange={ (event) => setEmail(event.target.value) }
+                            inputProps={{ maxLength: 64 }}
                         />
                         <Input
                             required
@@ -207,7 +208,7 @@ export default ({ history, location }) => {
                 { modal?.loading && <Spinner/> }
                 { modal?.unsuccessfulRegisterAlert && <Alert title={ t("account.error_title") } message={ t("account.unsuccessful_register") } buttons={ [{ title: t("account.close_button") }] } onButtonClick={ () => setModal(null) }/> }
                 { modal?.successfulRegisterAlert && <Alert title={ t("account.info_title") } message={ t("account.successful_register") } buttons={ [{ title: t("account.close_button") }] } onButtonClick={ () => setModal(null) }/> }
-                { modal?.editAlert && <Alert input inputProps={{ type: modal.editAlert === "password" ? "password" : "text" }} title={ t("account.edit_title") } message={ t("account.edit_" + modal.editAlert) } buttons={ [{ id: "close", title: t("account.close_button") }, { id: "update", title: t("account.update_button") }] } onButtonClick={ (id, input) => handleEditAlert(modal.editAlert, id, input) }/> }
+                { modal?.editAlert && <Alert input inputValue={ modal.editAlert.inputValue } inputProps={ modal.editAlert.inputProps } title={ t("account.edit_title") } message={ t("account.edit_" + modal.editAlert.property) } buttons={ [{ id: "close", title: t("account.close_button") }, { id: "update", title: t("account.update_button") }] } onButtonClick={ (id, input) => handleEditAlert(modal.editAlert.property, id, input) }/> }
                 { modal?.unsuccessfulUpdateAlert && <Alert title={ t("account.error_title") } message={ t("account.unsuccessful_update") } buttons={ [{ title: t("account.close_button") }] } onButtonClick={ () => setModal(null) }/> }
                 { modal?.successfulUpdateAlert && <Alert title={ t("account.info_title") } message={ t("account.successful_update") } buttons={ [{ title: t("account.close_button") }] } onButtonClick={ () => setModal(null) }/> }
                 { modal?.delete && <Alert title={ t("account.delete_title") } message={ t("account.delete_account_message") } buttons={ [{ id: "close", title: t("account.close_button") }, { id: "delete", title: t("account.delete_button") }] } onButtonClick={ handleDeleteAlert }/> }

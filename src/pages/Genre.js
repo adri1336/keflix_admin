@@ -36,7 +36,7 @@ export default ({ history, location }) => {
                         style={{ margin: Definitions.DEFAULT_MARGIN }}
                         title={ t("genre.name") }
                         value={ genre.name }
-                        onClick={ () => setModal({ editAlert: "name" }) }
+                        onClick={ () => setModal({ editAlert: { property: "name", inputValue: genre.name || "", inputProps: { type: "text", maxLength: 64 } } }) }
                     />
                     <EditableText
                         style={{ margin: Definitions.DEFAULT_MARGIN }}
@@ -92,6 +92,7 @@ export default ({ history, location }) => {
                             title={ t("genre.name").toUpperCase() }
                             value={ name }
                             onChange={ (event) => setName(event.target.value) }
+                            inputProps={{ maxLength: 64 }}
                         />
                         <Button
                             title={ t("genre.add_button").toUpperCase() }
@@ -163,7 +164,7 @@ export default ({ history, location }) => {
                 { modal?.loading && <Spinner/> }
                 { modal?.unsuccessfulCreateAlert && <Alert title={ t("genre.error_title") } message={ t("genre.unsuccessful_create") } buttons={ [{ title: t("genre.close_button") }] } onButtonClick={ () => setModal(null) }/> }
                 { modal?.successfulCreateAlert && <Alert title={ t("genre.info_title") } message={ t("genre.successful_register") } buttons={ [{ title: t("genre.close_button") }] } onButtonClick={ () => setModal(null) }/> }
-                { modal?.editAlert && <Alert input title={ t("genre.edit_title") } message={ t("genre.edit_" + modal.editAlert) } buttons={ [{ id: "close", title: t("genre.close_button") }, { id: "update", title: t("genre.update_button") }] } onButtonClick={ (id, input) => handleEditAlert(modal.editAlert, id, input) }/> }
+                { modal?.editAlert && <Alert input inputValue={ modal.editAlert.inputValue } inputProps={ modal.editAlert.inputProps } title={ t("genre.edit_title") } message={ t("genre.edit_" + modal.editAlert.property) } buttons={ [{ id: "close", title: t("genre.close_button") }, { id: "update", title: t("genre.update_button") }] } onButtonClick={ (id, input) => handleEditAlert(modal.editAlert.property, id, input) }/> }
                 { modal?.unsuccessfulUpdateAlert && <Alert title={ t("genre.error_title") } message={ t("genre.unsuccessful_update") } buttons={ [{ title: t("genre.close_button") }] } onButtonClick={ () => setModal(null) }/> }
                 { modal?.successfulUpdateAlert && <Alert title={ t("genre.info_title") } message={ t("genre.successful_update") } buttons={ [{ title: t("genre.close_button") }] } onButtonClick={ () => setModal(null) }/> }
                 { modal?.delete && <Alert title={ t("genre.delete_title") } message={ t("genre.delete_genre_message") } buttons={ [{ id: "close", title: t("genre.close_button") }, { id: "delete", title: t("genre.delete_button") }] } onButtonClick={ handleDeleteAlert }/> }

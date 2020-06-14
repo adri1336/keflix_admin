@@ -160,6 +160,7 @@ export default () => {
                         type="email"
                         value={ email }
                         onChange={ (event) => setEmail(event.target.value) }
+                        inputProps={{ maxLength: 64 }}
                     />
                     <Input
                         title={ t("login.password_input").toUpperCase() }
