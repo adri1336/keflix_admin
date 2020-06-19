@@ -58,6 +58,10 @@ createWindow = () => {
 		const fullPath = app_tmpDir + "/" + data.fileName;
 		const video = youtubedl(data.url, ["--format=18"], { cwd: app_tmpDir });
 
+		video.on("error", () => {
+			event.reply("download-youtube-video", null);
+		});
+
 		let size = 0;
 		video.on("info", info => {
 			size = info.size;
