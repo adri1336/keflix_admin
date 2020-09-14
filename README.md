@@ -1,5 +1,5 @@
 # Keflix (aplicación para administrar servidor)
-Esta es una aplicación backend para poder administrar el servidor de Keflix.
+Esta es una aplicación backend para poder administrar el servidor de Keflix (https://github.com/adri1336/keflix_server).
 Descarga el último lanzamiento desde: https://github.com/adri1336/keflix_admin/releases
 
 ## Integración con TMDb API
