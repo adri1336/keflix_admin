@@ -12,7 +12,7 @@ import Definitions from "utils/Definitions";
 import { useTranslation } from "react-i18next";
 
 import { AiOutlineBarChart } from "react-icons/ai";
-import { MdSupervisorAccount, MdMovie, MdSettings } from "react-icons/md";
+import { MdSupervisorAccount, MdMovie, MdTv, MdSettings } from "react-icons/md";
 import { FaTheaterMasks } from "react-icons/fa";
 
 import LoginPage from "pages/Login";
@@ -21,11 +21,16 @@ import InfoPage from "pages/Info";
 import AccountsPage from "pages/Accounts";
 import GenresPage from "pages/Genres";
 import MoviesPage from "pages/Movies";
+import TvsPage from "pages/Tvs";
 import ConfigPage from "pages/Config";
 import AccountPage from "pages/Account";
 import GenrePage from "pages/Genre";
 import AddMoviePage from "pages/AddMovie";
 import MoviePage from "pages/Movie";
+import AddTvPage from "pages/AddTv";
+import TvPage from "pages/Tv";
+import TvEpisodesPage from "pages/TvEpisodes";
+import AddTvEpisodePage from "pages/AddTvEpisode";
 
 export default function App() {
 	const [state, setState] = React.useState(null);
@@ -57,6 +62,12 @@ export default function App() {
 			icon: MdMovie
 		},
 		{
+			path: "/tvs",
+			name: t("app.tvs"),
+			component: TvsPage,
+			icon: MdTv
+		},
+		{
 			path: "/config",
 			name: t("app.config"),
 			component: ConfigPage,
@@ -82,6 +93,26 @@ export default function App() {
 			sidebar: false,
 			path: "/movie",
 			component: MoviePage
+		},
+		{
+			sidebar: false,
+			path: "/tv/add",
+			component: AddTvPage
+		},
+		{
+			sidebar: false,
+			path: "/tv",
+			component: TvPage
+		},
+		{
+			sidebar: false,
+			path: "/tv/episodes",
+			component: TvEpisodesPage
+		},
+		{
+			sidebar: false,
+			path: "/tv/episodes/add",
+			component: AddTvEpisodePage
 		}
 	];
 

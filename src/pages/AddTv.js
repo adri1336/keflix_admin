@@ -13,7 +13,7 @@ import Spinner from "components/Spinner";
 import Modal from "components/Modal";
 import { makeCancelable, downloadFile, downloadYoutubeVideo } from "utils/Functions";
 import * as GenreApi from "api/Genre";
-import * as MovieApi from "api/Movie";
+import * as TvApi from "api/Tv";
 import ProgressBar from "components/ProgressBar";
 import Alert from "components/Alert";
 import Table from "components/Table";
@@ -41,7 +41,7 @@ export default () => {
             searchValue: null,
             searchData: null,
             
-            selectedMovie: null,
+            selectedTv: null,
             youtubeTrailerKey: null,
             downloading: false,
             downloadFiles: {},
@@ -69,24 +69,24 @@ export default () => {
 
     React.useEffect(() => {
         if(state.uploading) {
-            let toUploadMovie = { ...state.formValues };
-            toUploadMovie.published = false;
-            toUploadMovie.genres = [];
+            let toUploadTv = { ...state.formValues };
+            toUploadTv.published = false;
+            toUploadTv.genres = [];
             
             for (let index = 0; index < state.genres.length; index++) {
                 const checked = state.formValues.genres[index];
                 if(checked) {
                     const genre = state.genres[index];
-                    toUploadMovie.genres.push(genre.id);
+                    toUploadTv.genres.push(genre.id);
                 } 
             }
 
             (
                 async () => {
-                    const movie = await MovieApi.create(authContext, toUploadMovie);
-                    if(movie) {
-                        const id = movie.id;
-                        setState(state => ({ ...state, uploadProgress: { ...state.uploadProgress, createMovie: 100 } }));
+                    const tv = await TvApi.create(authContext, toUploadTv);
+                    if(tv) {
+                        const id = tv.id;
+                        setState(state => ({ ...state, uploadProgress: { ...state.uploadProgress, createTv: 100 } }));
 
                         for(const key in state.uploadFiles) {
                             if(state.uploadFiles.hasOwnProperty(key)) {
@@ -97,7 +97,7 @@ export default () => {
                                         extension = ".mp4";
                                     }
 
-                                    await MovieApi.upload(authContext, id, file, key + extension, progressEvent => {
+                                    await TvApi.upload(authContext, id, file, key + extension, progressEvent => {
                                         const { loaded, total } = progressEvent;
 
                                         setState(state => {
@@ -111,7 +111,7 @@ export default () => {
                         }
                         
                         if(state.formValues.published) {
-                            await MovieApi.update(authContext, id, { published: true });
+                            await TvApi.update(authContext, id, { published: true });
                         }
 
                         setState(state => ({ ...state, uploadFinished: true }));
@@ -128,7 +128,7 @@ export default () => {
         if(state.searching && state.loading) {
             (
                 async () => {
-                    const results = await TMDbApi.searchMovies(authContext.state.tmdb, state.searchValue);
+                    const results = await TMDbApi.searchTvs(authContext.state.tmdb, state.searchValue);
                     if(results && results.length > 0) {
                         setState(state => ({ ...state, loading: false, searchData: results }));
                     }
@@ -141,43 +141,42 @@ export default () => {
     }, [state.searching, state.loading, state.searchValue, state.searchData, authContext]);
 
     React.useEffect(() => {
-        const getMovieNewFormValues = (movie, genres) => {
+        const getTvNewFormValues = (tv, genres) => {
             let newFormValues = {
-                title: movie.title || "",
-                original_title: movie.original_title || "",
-                overview: movie.overview || "",
+                name: tv.name || "",
+                original_name: tv.original_name || "",
+                overview: tv.overview || "",
                 genres: genres,
-                tagline: movie.tagline || "",
-                release_date: movie.release_date || "",
-                popularity: movie.popularity || "",
-                vote_average: movie.vote_average || "",
-                adult: movie.adult || false,
+                first_air_date: tv.first_air_date || "",
+                popularity: tv.popularity || "",
+                vote_average: tv.vote_average || "",
+                adult: tv.adult || false,
                 published: true
             };
             return newFormValues;
         };
 
-        if(state.selectedMovie && state.loading) {
+        if(state.selectedTv && state.loading) {
             (
                 async () => {
                     //generos
-                    let selectedMovieGenres = [];
+                    let selectedTvGenres = [];
                     for(let index = 0; index < state.genres.length; index++) {
-                        selectedMovieGenres.push(false);
+                        selectedTvGenres.push(false);
                     }
 
                     const tmdbGenres = await TMDbApi.genres(authContext.state.tmdb);
-                    const movieGenres = state.selectedMovie.genre_ids;
+                    const tvGenres = state.selectedTv.genre_ids;
                     if(tmdbGenres && tmdbGenres.length > 0 && state.genres && state.genres.length > 0) {
                         for(let index = 0; index < state.genres.length; index++) {
                             const genre = state.genres[index];
                             for(let j = 0; j < tmdbGenres.length; j++) {
                                 const tmdbGenre = tmdbGenres[j];
                                 if(tmdbGenre.name === genre.name) {
-                                    for(let x = 0; x < movieGenres.length; x++) {
-                                        const tmdbGenreId = movieGenres[x];
+                                    for(let x = 0; x < tvGenres.length; x++) {
+                                        const tmdbGenreId = tvGenres[x];
                                         if(tmdbGenreId === tmdbGenre.id) {
-                                            selectedMovieGenres[index] = true;
+                                            selectedTvGenres[index] = true;
                                             break;
                                         }
                                     }
@@ -188,7 +187,7 @@ export default () => {
                     }
 
                     //youtube trailer video
-                    const videoResults = await TMDbApi.getMovieVideos(authContext.state.tmdb, state.selectedMovie.id);
+                    const videoResults = await TMDbApi.getTvVideos(authContext.state.tmdb, state.selectedTv.id);
                     let youtubeKey = null;
                     if(videoResults && videoResults.length > 0) {
                         for(let i = 0; i < videoResults.length; i++) {
@@ -201,20 +200,20 @@ export default () => {
                     }
 
                     //obtener los datos adicionales de la pelicula
-                    let movie = state.selectedMovie;
-                    movie = await TMDbApi.getMovie(authContext.state.tmdb, movie.id);
-
-                    const newFormValues = getMovieNewFormValues(movie, selectedMovieGenres);
-                    if(movie.poster_path || movie.backdrop_path || youtubeKey) {
+                    let tv = state.selectedTv;
+                    tv = await TMDbApi.getTv(authContext.state.tmdb, tv.id);
+                    
+                    const newFormValues = getTvNewFormValues(tv, selectedTvGenres);
+                    if(tv.poster_path || tv.backdrop_path || youtubeKey) {
                         let newDownloadFiles = {};
-                        if(movie.poster_path) newDownloadFiles.poster = movie.poster_path;
-                        if(movie.backdrop_path) newDownloadFiles.backdrop = movie.backdrop_path;
+                        if(tv.poster_path) newDownloadFiles.poster = tv.poster_path;
+                        if(tv.backdrop_path) newDownloadFiles.backdrop = tv.backdrop_path;
                         if(youtubeKey) newDownloadFiles.trailer = youtubeKey;
 
                         setState(state => ({
                             ...state,
                             formValues: newFormValues,
-                            selectedMovie: null,
+                            selectedTv: null,
                             youtubeTrailerKey: youtubeKey,
                             downloading: true,
                             downloadFiles: newDownloadFiles,
@@ -226,7 +225,7 @@ export default () => {
                         setState(state => ({
                             ...state,
                             formValues: newFormValues,
-                            selectedMovie: null,
+                            selectedTv: null,
                             youtubeTrailerKey: null,
                             downloading: false,
                             downloadProgress: {},
@@ -236,7 +235,7 @@ export default () => {
                 }
             )();
         }
-    }, [state.selectedMovie, state.loading, state.genres, authContext]);
+    }, [state.selectedTv, state.loading, state.genres, authContext]);
 
     React.useEffect(() => {
         if(state.downloading) {
@@ -319,10 +318,10 @@ export default () => {
                             marginBottom: Definitions.DEFAULT_MARGIN
                         }}
                     >
-                        { t("add_movie.upload_error_message") } 
+                        { t("add_tv.upload_error_message") } 
                     </span>
                     <Link
-                        to="/movies"
+                        to="/tvs"
                         style={{
                             outline: "none",
                             textDecoration: "none"
@@ -330,7 +329,7 @@ export default () => {
                         tabIndex={ -1 }
                     >
                         <Button
-                            title={ t("add_movie.go_back_button").toUpperCase() }
+                            title={ t("add_tv.go_back_button").toUpperCase() }
                             type="submit"
                         />
                     </Link>
@@ -371,10 +370,10 @@ export default () => {
                             marginBottom: Definitions.DEFAULT_PADDING / 2
                         }}
                     >
-                        { t("add_movie.uploading_create_movie").toUpperCase() } 
+                        { t("add_tv.uploading_create_tv").toUpperCase() } 
                     </span>
                     <ProgressBar
-                        value={ state.uploadProgress.createMovie || 0 }
+                        value={ state.uploadProgress.createTv || 0 }
                     />
                 </div>
             );
@@ -400,7 +399,7 @@ export default () => {
                                         marginBottom: Definitions.DEFAULT_PADDING / 2
                                     }}
                                 >
-                                    { t("add_movie." + key).toUpperCase() } 
+                                    { t("add_tv." + key).toUpperCase() } 
                                 </span>
                                 <ProgressBar
                                     value={ state.uploadProgress[key] || 0 }
@@ -423,7 +422,7 @@ export default () => {
                     {
                         state.uploadFinished &&
                         <Link
-                            to="/movies"
+                            to="/tvs"
                             style={{
                                 outline: "none",
                                 textDecoration: "none"
@@ -431,7 +430,7 @@ export default () => {
                             tabIndex={ -1 }
                         >
                             <Button
-                                title={ t("add_movie.go_back_button").toUpperCase() }
+                                title={ t("add_tv.go_back_button").toUpperCase() }
                                 type="submit"
                                 style={{ marginTop: Definitions.DEFAULT_MARGIN }}
                             />
@@ -459,7 +458,7 @@ export default () => {
                         marginBottom: 30
                     }}
                 >
-                    { state.uploadFinished ? t("add_movie.upload_complete_title") : t("add_movie.uploading_title") }
+                    { state.uploadFinished ? t("add_tv.upload_complete_title") : t("add_tv.uploading_title") }
                 </span>
                 { renderUploadProgressBars() }
             </div>
@@ -499,7 +498,7 @@ export default () => {
                             marginBottom: Definitions.DEFAULT_PADDING
                         }}
                     >
-                        { t("add_movie.results_title") } 
+                        { t("add_tv.results_title") } 
                     </span>
                 </div>
                 <div
@@ -517,32 +516,32 @@ export default () => {
                             marginBottom: Definitions.DEFAULT_PADDING
                         }}
                     >
-                        { t("add_movie.total", { total: state.searchData?.length || 0 }) }
+                        { t("add_tv.total", { total: state.searchData?.length || 0 }) }
                     </span>
                     <Table
                         data={ state.searchData || null }
                         headers={[
                             {
-                                id: "title",
-                                name: t("add_movie.title_header"),
+                                id: "name",
+                                name: t("add_tv.name_header"),
                                 orderable: true,
                                 filterable: true
                             },
                             {
-                                id: "original_title",
-                                name: t("add_movie.original_title_header"),
+                                id: "original_name",
+                                name: t("add_tv.original_name_header"),
                                 orderable: true,
                                 filterable: true
                             },
                             {
-                                id: "release_date",
-                                name: t("add_movie.release_date_header"),
+                                id: "first_air_date",
+                                name: t("add_tv.first_air_date_header"),
                                 orderable: true,
                                 filterable: true
                             },
                             {
                                 id: "popularity",
-                                name: t("add_movie.popularity_header"),
+                                name: t("add_tv.popularity_header"),
                                 orderable: true,
                                 filterable: true
                             }
@@ -563,8 +562,8 @@ export default () => {
                         }
                         onRowClick={
                             index => {
-                                const movie = state.searchData[index];
-                                setState({ ...state, searching: false, searchData: null, searchValue: null, selectedMovie: movie, loading: true });
+                                const tv = state.searchData[index];
+                                setState({ ...state, searching: false, searchData: null, searchValue: null, selectedTv: tv, loading: true });
                             }
                         }
                     />
@@ -595,7 +594,7 @@ export default () => {
                                     marginBottom: Definitions.DEFAULT_PADDING / 2
                                 }}
                             >
-                                { t("add_movie." + key).toUpperCase() } 
+                                { t("add_tv." + key).toUpperCase() } 
                             </span>
                             <ProgressBar
                                 value={ state.downloadProgress[key] || 0 }
@@ -636,7 +635,7 @@ export default () => {
                         marginBottom: 30
                     }}
                 >
-                    { t("add_movie.downloading_title") }
+                    { t("add_tv.downloading_title") }
                 </span>
                 { renderDownloadProgressBars() }
             </div>
@@ -651,9 +650,8 @@ export default () => {
             if(state.formValues.files.poster) newUploadFiles.poster = state.formValues.files.poster;
             if(state.formValues.files.backdrop) newUploadFiles.backdrop = state.formValues.files.backdrop;
             if(state.formValues.files.trailer) newUploadFiles.trailer = state.formValues.files.trailer;
-            if(state.formValues.files.video) newUploadFiles.video = state.formValues.files.video;
 
-            setState({ ...state, uploading: true, uploadProgress: { createMovie: 0 }, uploadFiles: newUploadFiles });
+            setState({ ...state, uploading: true, uploadProgress: { createTv: 0 }, uploadFiles: newUploadFiles });
         };
 
         const handleTmdbSearchAlert = (id, input) => {
@@ -686,7 +684,7 @@ export default () => {
                             backgroundColor: "rgba(0, 0, 0, 0.5)"
                         }}
                     >
-                        <Alert input title={ t("add_movie.tmdb_search_title") } message={ t("add_movie.tmdb_search_message") } buttons={ [{ id: "close", title: t("add_movie.close_button") }, { id: "search", title: t("add_movie.search_button") }] } onButtonClick={ handleTmdbSearchAlert }/>
+                        <Alert input title={ t("add_tv.tmdb_search_title") } message={ t("add_tv.tmdb_search_message") } buttons={ [{ id: "close", title: t("add_tv.close_button") }, { id: "search", title: t("add_tv.search_button") }] } onButtonClick={ handleTmdbSearchAlert }/>
                     </Modal>
                 }
                 <div
@@ -705,7 +703,7 @@ export default () => {
                         }}
                     >
                         <Link
-                            to="/movies"
+                            to="/tvs"
                             style={{
                                 outline: "none",
                                 textDecoration: "none",
@@ -724,7 +722,7 @@ export default () => {
                                 fontSize: DEFAULT_SIZES.TITLE_SIZE
                             }}
                         >
-                            { t("add_movie.page_title") } 
+                            { t("add_tv.page_title") } 
                         </span>
                     </div>
                     <div
@@ -734,7 +732,7 @@ export default () => {
                         }}
                     >
                         <TextButton
-                            title={ t("add_movie.tmdb_search_button") }
+                            title={ t("add_tv.tmdb_search_button") }
                             style={{
                                 marginLeft: Definitions.DEFAULT_MARGIN,
                                 marginRight: Definitions.DEFAULT_MARGIN
@@ -773,22 +771,22 @@ export default () => {
                                     >
                                         <Input
                                             required
-                                            title={ t("add_movie.title").toUpperCase() }
+                                            title={ t("add_tv.name").toUpperCase() }
                                             type="text"
                                             inputProps={{ maxLength: 128 }}
-                                            value={ state.formValues.title || "" }
-                                            onChange={ (event) => setState({ ...state, formValues: { ...state.formValues, title: event.target.value } }) }
+                                            value={ state.formValues.name || "" }
+                                            onChange={ (event) => setState({ ...state, formValues: { ...state.formValues, name: event.target.value } }) }
                                         />
                                         <Input
-                                            title={ t("add_movie.original_title").toUpperCase() }
+                                            title={ t("add_tv.original_name").toUpperCase() }
                                             type="text"
                                             inputProps={{ maxLength: 128 }}
-                                            value={ state.formValues.original_title || "" }
-                                            onChange={ (event) => setState({ ...state, formValues: { ...state.formValues, original_title: event.target.value } }) }
+                                            value={ state.formValues.original_name || "" }
+                                            onChange={ (event) => setState({ ...state, formValues: { ...state.formValues, original_name: event.target.value } }) }
                                         />
                                         <Input
                                             textArea
-                                            title={ t("add_movie.overview").toUpperCase() }
+                                            title={ t("add_tv.overview").toUpperCase() }
                                             inputProps={{ maxLength: 1024 }}
                                             value={ state.formValues.overview || "" }
                                             onChange={ (event) => setState({ ...state, formValues: { ...state.formValues, overview: event.target.value } }) }
@@ -810,7 +808,7 @@ export default () => {
                                                         marginBottom: Definitions.DEFAULT_PADDING / 2
                                                     }}
                                                 >
-                                                    { t("add_movie.genres").toUpperCase() }
+                                                    { t("add_tv.genres").toUpperCase() }
                                                 </span>
                                                 <div
                                                     style={{
@@ -841,16 +839,10 @@ export default () => {
                                             </div>
                                         }
                                         <Input
-                                            title={ t("add_movie.tagline").toUpperCase() }
-                                            inputProps={{ maxLength: 128 }}
-                                            value={ state.formValues.tagline || "" }
-                                            onChange={ (event) => setState({ ...state, formValues: { ...state.formValues, tagline: event.target.value } }) }
-                                        />
-                                        <Input
-                                            title={ t("add_movie.release_date").toUpperCase() }
+                                            title={ t("add_tv.first_air_date").toUpperCase() }
                                             type="date"
-                                            value={ state.formValues.release_date || "" }
-                                            onChange={ (event) => setState({ ...state, formValues: { ...state.formValues, release_date: event.target.value } }) }
+                                            value={ state.formValues.first_air_date || "" }
+                                            onChange={ (event) => setState({ ...state, formValues: { ...state.formValues, first_air_date: event.target.value } }) }
                                         />
                                         <div
                                             style={{
@@ -860,14 +852,14 @@ export default () => {
                                             }}
                                         >
                                             <Input
-                                                title={ t("add_movie.popularity").toUpperCase() }
+                                                title={ t("add_tv.popularity").toUpperCase() }
                                                 type="number"
                                                 inputProps={{ min: 0, step: "0.001" }}
                                                 value={ state.formValues.popularity || "" }
                                                 onChange={ (event) => setState({ ...state, formValues: { ...state.formValues, popularity: event.target.value } }) }
                                             />
                                             <Input
-                                                title={ t("add_movie.vote_average").toUpperCase() }
+                                                title={ t("add_tv.vote_average").toUpperCase() }
                                                 type="number"
                                                 inputProps={{ min: 0, max: 10, step: "0.001" }}
                                                 value={ state.formValues.vote_average || "" }
@@ -875,12 +867,12 @@ export default () => {
                                             />
                                         </div>
                                         <Checkbox
-                                            title={ t("add_movie.adult").toUpperCase() }
+                                            title={ t("add_tv.adult").toUpperCase() }
                                             checked={ state.formValues.adult || false }
                                             onChange={ (event) => setState({ ...state, formValues: { ...state.formValues, adult: event.target.checked } }) }
                                         />
                                         <Checkbox
-                                            title={ t("add_movie.published").toUpperCase() }
+                                            title={ t("add_tv.published").toUpperCase() }
                                             style={{
                                                 marginBottom: 0
                                             }}
@@ -888,7 +880,7 @@ export default () => {
                                             onChange={ (event) => setState({ ...state, formValues: { ...state.formValues, published: event.target.checked } }) }
                                         />
                                         <Button
-                                            title={ t("add_movie.add_button").toUpperCase() }
+                                            title={ t("add_tv.add_button").toUpperCase() }
                                             type="submit"
                                             style={{ flexDirection: "column", margin: Definitions.DEFAULT_MARGIN }}
                                         />
@@ -910,7 +902,7 @@ export default () => {
                                         >
                                             <FileSelector
                                                 inputId="logo"
-                                                title={ t("add_movie.logo") }
+                                                title={ t("add_tv.logo") }
                                                 inputProps={{ accept: "image/*" }}
                                                 file={ state.formValues.files.logo }
                                                 onChange={ file => setState({ ...state, formValues: { ...state.formValues, files: { ...state.formValues.files, logo: file } } }) }
@@ -933,7 +925,7 @@ export default () => {
                                             >
                                                 <FileSelector
                                                     inputId="poster"
-                                                    title={ t("add_movie.poster") }
+                                                    title={ t("add_tv.poster") }
                                                     inputProps={{ accept: "image/*" }}
                                                     file={ state.formValues.files.poster }
                                                     onChange={ file => setState({ ...state, formValues: { ...state.formValues, files: { ...state.formValues.files, poster: file } } }) }
@@ -941,7 +933,7 @@ export default () => {
                                             </div>
                                             <FileSelector
                                                 inputId="backdrop"
-                                                title={ t("add_movie.backdrop") }
+                                                title={ t("add_tv.backdrop") }
                                                 inputProps={{ accept: "image/*" }}
                                                 file={ state.formValues.files.backdrop }
                                                 onChange={ file => setState({ ...state, formValues: { ...state.formValues, files: { ...state.formValues.files, backdrop: file } } }) }
@@ -955,27 +947,12 @@ export default () => {
                                                 marginBottom: Definitions.DEFAULT_MARGIN
                                             }}
                                         >
-                                            <div
-                                                style={{
-                                                    display: "flex",
-                                                    flex: 1,
-                                                    marginRight: Definitions.DEFAULT_PADDING
-                                                }}
-                                            >
-                                                <FileSelector
-                                                    inputId="trailer"
-                                                    title={ t("add_movie.trailer") }
-                                                    inputProps={{ accept: "video/*,.mkv" }}
-                                                    file={ state.formValues.files.trailer }
-                                                    onChange={ file => setState({ ...state, formValues: { ...state.formValues, files: { ...state.formValues.files, trailer: file } } }) }
-                                                />
-                                            </div>
                                             <FileSelector
-                                                inputId="video"
-                                                title={ t("add_movie.video") }
+                                                inputId="trailer"
+                                                title={ t("add_tv.trailer") }
                                                 inputProps={{ accept: "video/*,.mkv" }}
-                                                file={ state.formValues.files.video }
-                                                onChange={ file => setState({ ...state, formValues: { ...state.formValues, files: { ...state.formValues.files, video: file } } }) }
+                                                file={ state.formValues.files.trailer }
+                                                onChange={ file => setState({ ...state, formValues: { ...state.formValues, files: { ...state.formValues.files, trailer: file } } }) }
                                             />
                                         </div>
                                     </div>

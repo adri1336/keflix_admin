@@ -8,7 +8,7 @@ import EditableText from "components/EditableText";
 import Spinner from "components/Spinner";
 import Modal from "components/Modal";
 import Alert from "components/Alert";
-import * as MovieApi from "api/Movie";
+import * as TvApi from "api/Tv";
 import * as GenreApi from "api/Genre";
 import { makeCancelable } from "utils/Functions";
 import Checkbox from "components/Checkbox";
@@ -27,7 +27,7 @@ export default ({ history, location }) => {
         alert: null,
         editAlert: null,
         updating: false,
-        movie: location.state?.movie || null,
+        tv: location.state?.tv || null,
         currentGenres: null,
         selectedGenres: null,
 
@@ -48,14 +48,14 @@ export default ({ history, location }) => {
                 .then(info => {
                     if(info) {
                         let newCurrentGenres = [];
-                        if(state.movie) {
+                        if(state.tv) {
                             for(let index = 0; index < info.length; index++) {
                                 const genre = info[index];
                                 let found = false;
 
-                                for(let j = 0; j < state.movie.genres.length; j++) {
-                                    const movieGenre = state.movie.genres[j];
-                                    if(movieGenre.id === genre.id) {
+                                for(let j = 0; j < state.tv.genres.length; j++) {
+                                    const tvGenre = state.tv.genres[j];
+                                    if(tvGenre.id === genre.id) {
                                         found = true;
                                         break;
                                     }
@@ -74,11 +74,11 @@ export default ({ history, location }) => {
                 .catch(error => { console.log(error) });
             return () => getDataPromise.cancel();
         }
-    }, [state.loading, state.genres, state.movie, authContext]);
+    }, [state.loading, state.genres, state.tv, authContext]);
 
     React.useEffect(() => {
         setState(state => {
-            const { mediaInfo } = state.movie;
+            const { mediaInfo } = state.tv;
             let newFilesChanged = {};
 
             for(const key in mediaInfo) {
@@ -89,13 +89,13 @@ export default ({ history, location }) => {
 
             return { ...state, filesChanged: newFilesChanged, filesChangedDate: Date.now() };
         });
-    }, [state.movie]);
+    }, [state.tv]);
 
     React.useEffect(() => {
         if(state.updatingFiles && !state.updateFilesFinished) {
             (
                 async () => {
-                    const movieId = state.movie.id;
+                    const tvId = state.tv.id;
                     for(const key in state.filesChanged) {
                         if(state.filesChanged.hasOwnProperty(key)) {
                             const changed = state.filesChanged[key];
@@ -108,7 +108,7 @@ export default ({ history, location }) => {
 
                                 if(file) {
                                     //subir 
-                                    await MovieApi.upload(authContext, movieId, file, key + extension, progressEvent => {
+                                    await TvApi.upload(authContext, tvId, file, key + extension, progressEvent => {
                                         const { loaded, total } = progressEvent;
         
                                         setState(state => {
@@ -120,7 +120,7 @@ export default ({ history, location }) => {
                                 }
                                 else {
                                     //eliminar
-                                    await MovieApi.remove(authContext, movieId, key + extension);
+                                    await TvApi.remove(authContext, tvId, key + extension);
                                     setState(state => {
                                         let newUpdatingProgress = { ...state.updatingProgress };
                                         newUpdatingProgress[key] = 100;
@@ -131,13 +131,13 @@ export default ({ history, location }) => {
                         }
                     }
         
-                    //fin get movie
-                    const newMovie = await MovieApi.getMovie(authContext, movieId);
-                    setState(state => ({ ...state, movie: newMovie, updateFilesFinished: true }));
+                    //fin get tv
+                    const newTv = await TvApi.getTv(authContext, tvId);
+                    setState(state => ({ ...state, tv: newTv, updateFilesFinished: true }));
                 }
             )();
         }
-    }, [state.updatingFiles, state.updateFilesFinished, state.filesChanged, state.newFiles, state.movie.id, authContext]);
+    }, [state.updatingFiles, state.updateFilesFinished, state.filesChanged, state.newFiles, state.tv.id, authContext]);
 
     const renderPage = () => {
         if(state.loading) {
@@ -161,8 +161,8 @@ export default ({ history, location }) => {
                 for(const key in state.updatingProgress) {
                     if(state.updatingProgress.hasOwnProperty(key)) {
                         let title = "";
-                        if(state.newFiles[key]) title = t("movie.uploading_new_item").toUpperCase() + " " + t("movie." + key).toUpperCase();
-                        else title = t("movie.deleting_item").toUpperCase() + " " + t("movie." + key).toUpperCase();
+                        if(state.newFiles[key]) title = t("tv.uploading_new_item").toUpperCase() + " " + t("tv." + key).toUpperCase();
+                        else title = t("tv.deleting_item").toUpperCase() + " " + t("tv." + key).toUpperCase();
 
                         items.push(
                             <div
@@ -203,7 +203,7 @@ export default ({ history, location }) => {
                         {
                             state.updateFilesFinished &&
                             <Button
-                                title={ t("movie.go_back_button").toUpperCase() }
+                                title={ t("tv.go_back_button").toUpperCase() }
                                 type="submit"
                                 style={{ marginTop: Definitions.DEFAULT_MARGIN }}
                                 onClick={
@@ -235,14 +235,14 @@ export default ({ history, location }) => {
                             marginBottom: 30
                         }}
                     >
-                        { state.updateFilesFinished ? t("movie.update_completed_title") : t("movie.updating_title") }
+                        { state.updateFilesFinished ? t("tv.update_completed_title") : t("tv.updating_title") }
                     </span>
                     { renderProgressBars() }
                 </div>
             );
         }
 
-        const renderMovieInfo = () => {
+        const renderTvInfo = () => {
             const genresChanged = () => {
                 if(state.currentGenres && state.selectedGenres && state.currentGenres.length > 0 && state.selectedGenres.length > 0 && state.currentGenres.length === state.selectedGenres.length) {
                     for(let i = 0; i < state.currentGenres.length; i++) {
@@ -266,23 +266,23 @@ export default ({ history, location }) => {
                 return false;
             };
 
-            if(state.movie && state.movie.id > 0) {
-                const movie = state.movie;
+            if(state.tv && state.tv.id > 0) {
+                const tv = state.tv;
                 
-                const renderMovieGenres = () => {
+                const renderTvGenres = () => {
                     const handleUpdateGenresButton = async () => {
                         setState({ ...state, updating: true });
                         
-                        let newMovieGenres = [];
+                        let newTvGenres = [];
                         for(let index = 0; index < state.selectedGenres.length; index++) {
                             const selectedGenre = state.selectedGenres[index];
                             if(selectedGenre) {
-                                newMovieGenres.push(state.genres[index].id);
+                                newTvGenres.push(state.genres[index].id);
                             }
                         }
                         
-                        const updatedMovie = await MovieApi.updateGenres(authContext, state.movie.id, newMovieGenres);
-                        setState({ ...state, movie: updatedMovie, updating: false, currentGenres: state.selectedGenres.slice(0) });
+                        const updatedTv = await TvApi.updateGenres(authContext, state.tv.id, newTvGenres);
+                        setState({ ...state, tv: updatedTv, updating: false, currentGenres: state.selectedGenres.slice(0) });
                     };
 
                     if(state.genres && state.genres.length > 0) {
@@ -302,7 +302,7 @@ export default ({ history, location }) => {
                                         marginBottom: Definitions.DEFAULT_PADDING / 2
                                     }}
                                 >
-                                    { t("movie.genres") }
+                                    { t("tv.genres") }
                                 </span>
                                 <div
                                     style={{
@@ -343,12 +343,12 @@ export default ({ history, location }) => {
                                         }}
                                     >
                                         <Button
-                                            title={ t("movie.undo_button").toUpperCase() }
+                                            title={ t("tv.undo_button").toUpperCase() }
                                             onClick={ () => { setState({ ...state, selectedGenres: state.currentGenres.slice(0) }) } }
                                             style={{ marginRight: Definitions.DEFAULT_PADDING / 2 }}
                                         />
                                         <Button
-                                            title={ t("movie.update_button").toUpperCase() }
+                                            title={ t("tv.update_button").toUpperCase() }
                                             onClick={ handleUpdateGenresButton }
                                         />
                                     </div>
@@ -399,102 +399,96 @@ export default ({ history, location }) => {
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
                                     editable={ false }
-                                    title={ t("movie.id") }
-                                    value={ movie.id }
+                                    title={ t("tv.id") }
+                                    value={ tv.id }
                                 />
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
-                                    title={ t("movie.title") }
-                                    value={ movie.title || "" }
-                                    onClick={ () => setState({ ...state, editAlert: { property: "title", inputValue: movie.title || "",  inputProps: { type: "text", maxLength: 128 } } }) }
+                                    title={ t("tv.name") }
+                                    value={ tv.name || "" }
+                                    onClick={ () => setState({ ...state, editAlert: { property: "name", inputValue: tv.name || "",  inputProps: { type: "text", maxLength: 128 } } }) }
                                 />
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
-                                    title={ t("movie.original_title") }
-                                    value={ movie.original_title || "" }
-                                    onClick={ () => setState({ ...state, editAlert: { property: "original_title", inputValue: movie.original_title || "", inputProps: { type: "text", maxLength: 128 } } }) }
+                                    title={ t("tv.original_name") }
+                                    value={ tv.original_name || "" }
+                                    onClick={ () => setState({ ...state, editAlert: { property: "original_name", inputValue: tv.original_name || "", inputProps: { type: "text", maxLength: 128 } } }) }
                                 />
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
-                                    title={ t("movie.overview") }
-                                    value={ movie.overview || "" }
-                                    onClick={ () => setState({ ...state, editAlert: { property: "overview", textArea: true, inputValue: movie.overview || "", inputProps: { type: "text", maxLength: 1024 } } }) }
+                                    title={ t("tv.overview") }
+                                    value={ tv.overview || "" }
+                                    onClick={ () => setState({ ...state, editAlert: { property: "overview", textArea: true, inputValue: tv.overview || "", inputProps: { type: "text", maxLength: 1024 } } }) }
                                 />
-                                { renderMovieGenres() }
+                                { renderTvGenres() }
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
-                                    title={ t("movie.tagline") }
-                                    value={ movie.tagline || "" }
-                                    onClick={ () => setState({ ...state, editAlert: { property: "tagline", inputValue: movie.tagline || "", inputProps: { type: "text", maxLength: 128 } } }) }
-                                />
-                                <EditableText
-                                    style={{ margin: Definitions.DEFAULT_MARGIN }}
-                                    title={ t("movie.release_date") }
-                                    value={ movie.release_date || "" }
-                                    onClick={ () => setState({ ...state, editAlert: { property: "release_date", inputValue: movie.release_date ? ( new Date(movie.release_date).toISOString().split("T")[0] ) : "", inputProps: { type: "date" } } }) }
+                                    title={ t("tv.first_air_date") }
+                                    value={ tv.first_air_date || "" }
+                                    onClick={ () => setState({ ...state, editAlert: { property: "first_air_date", inputValue: tv.first_air_date ? ( new Date(tv.first_air_date).toISOString().split("T")[0] ) : "", inputProps: { type: "date" } } }) }
                                 />
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
-                                    title={ t("movie.popularity") }
-                                    value={ movie.popularity || "" }
-                                    onClick={ () => setState({ ...state, editAlert: { property: "popularity", inputValue: movie.popularity || "", inputProps: { type: "number", min: 0, step: "0.001" } } }) }
+                                    title={ t("tv.popularity") }
+                                    value={ tv.popularity || "" }
+                                    onClick={ () => setState({ ...state, editAlert: { property: "popularity", inputValue: tv.popularity || "", inputProps: { type: "number", min: 0, step: "0.001" } } }) }
                                 />
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
-                                    title={ t("movie.vote_average") }
-                                    value={ movie.vote_average || "" }
-                                    onClick={ () => setState({ ...state, editAlert: { property: "vote_average", inputValue: movie.vote_average || "", inputProps: { type: "number", min: 0, max: 10, step: "0.001" } } }) }
+                                    title={ t("tv.vote_average") }
+                                    value={ tv.vote_average || "" }
+                                    onClick={ () => setState({ ...state, editAlert: { property: "vote_average", inputValue: tv.vote_average || "", inputProps: { type: "number", min: 0, max: 10, step: "0.001" } } }) }
                                 />
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
-                                    title={ t("movie.adult") }
-                                    value={ movie.adult ? t("movie.yes") : t("movie.no") }
-                                    onClick={ () => handleEditAlert("adult", "update", !movie.adult) }
+                                    title={ t("tv.adult") }
+                                    value={ tv.adult ? t("tv.yes") : t("tv.no") }
+                                    onClick={ () => handleEditAlert("adult", "update", !tv.adult) }
                                 />
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
-                                    title={ t("movie.published") }
-                                    value={ movie.published ? t("movie.yes") : t("movie.no") }
-                                    onClick={ () => handleEditAlert("published", "update", !movie.published) }
+                                    title={ t("tv.published") }
+                                    value={ tv.published ? t("tv.yes") : t("tv.no") }
+                                    onClick={ () => handleEditAlert("published", "update", !tv.published) }
                                 />
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
-                                    title={ t("movie.total_views") }
-                                    value={ movie.total_views.toString() }
-                                    onClick={ () => setState({ ...state, editAlert: { property: "total_views", inputValue: movie.total_views.toString() || "", inputProps: { type: "number", min: 0 } } }) }
+                                    title={ t("tv.total_views") }
+                                    value={ tv.total_views.toString() }
+                                    onClick={ () => setState({ ...state, editAlert: { property: "total_views", inputValue: tv.total_views.toString() || "", inputProps: { type: "number", min: 0 } } }) }
                                 />
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
-                                    title={ t("movie.views_last_month") }
-                                    value={ movie.views_last_month.toString() }
-                                    onClick={ () => setState({ ...state, editAlert: { property: "views_last_month", inputValue: movie.views_last_month.toString() || "", inputProps: { type: "number", min: 0 } } }) }
+                                    title={ t("tv.views_last_month") }
+                                    value={ tv.views_last_month.toString() }
+                                    onClick={ () => setState({ ...state, editAlert: { property: "views_last_month", inputValue: tv.views_last_month.toString() || "", inputProps: { type: "number", min: 0 } } }) }
                                 />
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
-                                    title={ t("movie.views_last_week") }
-                                    value={ movie.views_last_week.toString() }
-                                    onClick={ () => setState({ ...state, editAlert: { property: "views_last_week", inputValue: movie.views_last_week.toString() || "", inputProps: { type: "number", min: 0 } } }) }
+                                    title={ t("tv.views_last_week") }
+                                    value={ tv.views_last_week.toString() }
+                                    onClick={ () => setState({ ...state, editAlert: { property: "views_last_week", inputValue: tv.views_last_week.toString() || "", inputProps: { type: "number", min: 0 } } }) }
                                 />
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
-                                    title={ t("movie.views_today") }
-                                    value={ movie.views_today.toString() }
-                                    onClick={ () => setState({ ...state, editAlert: { property: "views_today", inputValue: movie.views_today.toString() || "", inputProps: { type: "number", min: 0 } } }) }
+                                    title={ t("tv.views_today") }
+                                    value={ tv.views_today.toString() }
+                                    onClick={ () => setState({ ...state, editAlert: { property: "views_today", inputValue: tv.views_today.toString() || "", inputProps: { type: "number", min: 0 } } }) }
                                 />
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
                                     editable={ false }
-                                    title={ t("movie.created_at") }
-                                    value={ movie.createdAt || "" }
+                                    title={ t("tv.created_at") }
+                                    value={ tv.createdAt || "" }
                                 />
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
                                     editable={ false }
-                                    title={ t("movie.updated_at") }
-                                    value={ movie.updatedAt || "" }
+                                    title={ t("tv.updated_at") }
+                                    value={ tv.updatedAt || "" }
                                 />
                                 <TextButton
-                                    title={ t("movie.delete_movie_button") }
+                                    title={ t("tv.delete_tv_button") }
                                     style={{ margin: Definitions.DEFAULT_MARGIN, marginBottom: 50 }}
                                     color="red"
                                     onClick={ () => setState({ ...state, alert: "delete" }) }
@@ -516,10 +510,10 @@ export default ({ history, location }) => {
                                 >
                                     <FileSelector
                                         inputId="logo"
-                                        title={ t("movie.logo") }
+                                        title={ t("tv.logo") }
                                         inputProps={{ accept: "image/*" }}
                                         initial={{
-                                            url: movie.mediaInfo.logo ? MovieApi.getMediaFile(authContext, movie.id, "logo.png") : null,
+                                            url: tv.mediaInfo.logo ? TvApi.getMediaFile(authContext, tv.id, "logo.png") : null,
                                             type: "image",
                                             date: state.filesChangedDate
                                         }}
@@ -543,10 +537,10 @@ export default ({ history, location }) => {
                                     >
                                         <FileSelector
                                             inputId="poster"
-                                            title={ t("movie.poster") }
+                                            title={ t("tv.poster") }
                                             inputProps={{ accept: "image/*" }}
                                             initial={{
-                                                url: movie.mediaInfo.poster ? MovieApi.getMediaFile(authContext, movie.id, "poster.png") : null,
+                                                url: tv.mediaInfo.poster ? TvApi.getMediaFile(authContext, tv.id, "poster.png") : null,
                                                 type: "image",
                                                 date: state.filesChangedDate
                                             }}
@@ -555,10 +549,10 @@ export default ({ history, location }) => {
                                     </div>
                                     <FileSelector
                                         inputId="backdrop"
-                                        title={ t("movie.backdrop") }
+                                        title={ t("tv.backdrop") }
                                         inputProps={{ accept: "image/*" }}
                                         initial={{
-                                            url: movie.mediaInfo.backdrop ? MovieApi.getMediaFile(authContext, movie.id, "backdrop.png") : null,
+                                            url: tv.mediaInfo.backdrop ? TvApi.getMediaFile(authContext, tv.id, "backdrop.png") : null,
                                             type: "image",
                                             date: state.filesChangedDate
                                         }}
@@ -573,35 +567,16 @@ export default ({ history, location }) => {
                                         marginBottom: Definitions.DEFAULT_MARGIN
                                     }}
                                 >
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            flex: 1,
-                                            marginRight: Definitions.DEFAULT_PADDING
-                                        }}
-                                    >
-                                        <FileSelector
-                                            inputId="trailer"
-                                            title={ t("movie.trailer") }
-                                            inputProps={{ accept: "video/*,.mkv" }}
-                                            initial={{
-                                                url: movie.mediaInfo.trailer ? MovieApi.getMediaFile(authContext, movie.id, "trailer.mp4") : null,
-                                                type: "video",
-                                                date: state.filesChangedDate
-                                            }}
-                                            onChange={ file => setState({ ...state, newFiles: { ...state.newFiles, trailer: file }, filesChanged: { ...state.filesChanged, trailer: true } }) }
-                                        />
-                                    </div>
                                     <FileSelector
-                                        inputId="video"
-                                        title={ t("movie.video") }
+                                        inputId="trailer"
+                                        title={ t("tv.trailer") }
                                         inputProps={{ accept: "video/*,.mkv" }}
                                         initial={{
-                                            url: movie.mediaInfo.video ? MovieApi.getMediaFile(authContext, movie.id, "video.mp4") : null,
+                                            url: tv.mediaInfo.trailer ? TvApi.getMediaFile(authContext, tv.id, "trailer.mp4") : null,
                                             type: "video",
                                             date: state.filesChangedDate
                                         }}
-                                        onChange={ file => setState({ ...state, newFiles: { ...state.newFiles, video: file }, filesChanged: { ...state.filesChanged, video: true } }) }
+                                        onChange={ file => setState({ ...state, newFiles: { ...state.newFiles, trailer: file }, filesChanged: { ...state.filesChanged, trailer: true } }) }
                                     />
                                 </div>
                                 {
@@ -614,13 +589,13 @@ export default ({ history, location }) => {
                                         }}
                                     >
                                         <Button
-                                            title={ t("movie.undo_button").toUpperCase() }
+                                            title={ t("tv.undo_button").toUpperCase() }
                                             onClick={ 
                                                 () => {
                                                     let newFilesChanged = [];
 
-                                                    for(const key in state.movie.mediaInfo) {
-                                                        if(state.movie.mediaInfo.hasOwnProperty(key)) {
+                                                    for(const key in state.tv.mediaInfo) {
+                                                        if(state.tv.mediaInfo.hasOwnProperty(key)) {
                                                             newFilesChanged[key] = false;
                                                         }
                                                     }
@@ -630,11 +605,23 @@ export default ({ history, location }) => {
                                             style={{ marginRight: Definitions.DEFAULT_PADDING / 2 }}
                                         />
                                         <Button
-                                            title={ t("movie.update_button").toUpperCase() }
+                                            title={ t("tv.update_button").toUpperCase() }
                                             onClick={ handleUpdateFilesButton }
                                         />
                                     </div>
                                 }
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        flexDirection: "row",
+                                        marginTop: Definitions.DEFAULT_PADDING / 2
+                                    }}
+                                >
+                                    <Button
+                                        title={ t("tv.episodes_button").toUpperCase() }
+                                        onClick={ () => history.replace("/tv/episodes", { tv: state.tv }) }
+                                    />
+                                </div>
                             </div>
                         </div>
                     </fieldset>
@@ -659,7 +646,7 @@ export default ({ history, location }) => {
                     }}
                 >
                     <Link
-                        to="/movies"
+                        to="/tvs"
                         style={{
                             outline: "none",
                             textDecoration: "none",
@@ -679,10 +666,10 @@ export default ({ history, location }) => {
                             marginBottom: Definitions.DEFAULT_PADDING
                         }}
                     >
-                        { t("movie.page_title") } 
+                        { t("tv.page_title") } 
                     </span>
                 </div>
-                { renderMovieInfo() }
+                { renderTvInfo() }
             </div>
         );
     };
@@ -691,11 +678,11 @@ export default ({ history, location }) => {
         if(buttonId === "update") {
             setState({ ...state, updating: true, editAlert: null });
 
-            let newMovie = {};
-            newMovie[property] = inputValue;
+            let newTv = {};
+            newTv[property] = inputValue;
             
-            const updatedMovie = await MovieApi.update(authContext, state.movie.id, newMovie);
-            setState({ ...state, movie: updatedMovie, updating: false, editAlert: null });
+            const updatedTv = await TvApi.update(authContext, state.tv.id, newTv);
+            setState({ ...state, tv: updatedTv, updating: false, editAlert: null });
         }
         else {
             setState({ ...state, editAlert: null });
@@ -707,9 +694,9 @@ export default ({ history, location }) => {
             if(id === "delete") {
                 setState({ ...state, updating: true, alert: null });
 
-                const result = await MovieApi.destroy(authContext, state.movie.id);
+                const result = await TvApi.destroy(authContext, state.tv.id);
                 if(result) {
-                    history.replace("/movies");
+                    history.replace("/tvs");
                 }
                 else {
                     setState({ ...state, updating: false, alert: "unsuccessfulDelete" });
@@ -724,9 +711,9 @@ export default ({ history, location }) => {
             case "delete": {
                 return (
                     <Alert
-                        title={ t("movie.delete_title") }
-                        message={ t("movie.delete_movie_message") }
-                        buttons={ [{ id: "close", title: t("movie.close_button") }, { id: "delete", title: t("movie.delete_button") }] }
+                        title={ t("tv.delete_title") }
+                        message={ t("tv.delete_tv_message") }
+                        buttons={ [{ id: "close", title: t("tv.close_button") }, { id: "delete", title: t("tv.delete_button") }] }
                         onButtonClick={ handleDeleteAlert }
                     />
                 );
@@ -734,9 +721,9 @@ export default ({ history, location }) => {
             case "unsuccessfulDelete": {
                 return (
                     <Alert
-                        title={ t("movie.error_title") }
-                        message={ t("movie.unsuccessful_delete") }
-                        buttons={ [{ title: t("movie.close_button") }] }
+                        title={ t("tv.error_title") }
+                        message={ t("tv.unsuccessful_delete") }
+                        buttons={ [{ title: t("tv.close_button") }] }
                         onButtonClick={ () => setState({ ...state, alert: null }) }
                     />
                 );
@@ -781,9 +768,9 @@ export default ({ history, location }) => {
                             textArea={ state.editAlert.textArea || false }
                             inputValue={ state.editAlert.inputValue }
                             inputProps={ state.editAlert.inputProps }
-                            title={ t("movie.edit_alert_title") }
-                            message={ t("movie.edit_alert_" + state.editAlert.property + "_message") }
-                            buttons={ [{ id: "close", title: t("movie.close_button") }, { id: "update", title: t("movie.update_button") }] }
+                            title={ t("tv.edit_alert_title") }
+                            message={ t("tv.edit_alert_" + state.editAlert.property + "_message") }
+                            buttons={ [{ id: "close", title: t("tv.close_button") }, { id: "update", title: t("tv.update_button") }] }
                             onButtonClick={ (id, input) => handleEditAlert(state.editAlert.property, id, input) }
                         />
                     }
