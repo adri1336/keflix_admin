@@ -609,9 +609,12 @@ export default ({ history, location }) => {
                                         }}
                                         onChange={
                                             async file => {
-                                                let duration = await getVideoDurationInSeconds(file.path);
-                                                duration = Math.round(duration / 60);
-                                                setState({ ...state, movie: { ...movie, runtime: duration }, newFiles: { ...state.newFiles, video: file }, filesChanged: { ...state.filesChanged, video: true } });
+                                                if(file) {
+                                                    let duration = await getVideoDurationInSeconds(file.path);
+                                                    duration = Math.round(duration / 60);
+                                                    setState({ ...state, movie: { ...movie, runtime: duration }, newFiles: { ...state.newFiles, video: file }, filesChanged: { ...state.filesChanged, video: true } });
+                                                }
+                                                else setState({ ...state, newFiles: { ...state.newFiles, video: file }, filesChanged: { ...state.filesChanged, video: true } });
                                             }
                                         }
                                     />

@@ -8,7 +8,8 @@ const { ipcRenderer } = window.require("electron");
 export default ({ inputId, title, file, initial, inputProps, onChange }) => {
     const
         [selectedFile, setSelectedFile] = React.useState(file || null),
-        [initialInfo, setInitialInfo] = React.useState(initial || null);
+        [initialInfo, setInitialInfo] = React.useState(initial || null),
+        [dragging, setDragging] = React.useState(false);
 
     if(initialInfo && initialInfo.hasOwnProperty("date")) {
         React.useEffect(() => {
@@ -32,7 +33,8 @@ export default ({ inputId, title, file, initial, inputProps, onChange }) => {
                             height: "100%",
                             maxWidth: "100%",
                             maxHeight: "100%",
-                            objectFit: "contain"
+                            objectFit: "contain",
+                            pointerEvents: "none"
                         }}
                         tabIndex={ -1 }
                     />
@@ -49,7 +51,8 @@ export default ({ inputId, title, file, initial, inputProps, onChange }) => {
                             height: "100%",
                             maxWidth: "100%",
                             maxHeight: "100%",
-                            objectFit: "cover"
+                            objectFit: "cover",
+                            pointerEvents: "none"
                         }}
                         tabIndex={ -1 }
                         type="video/mp4"
@@ -110,14 +113,37 @@ export default ({ inputId, title, file, initial, inputProps, onChange }) => {
         >
             <div
                 style={{
+                    position: "relative",
                     display: "flex",
                     flex: 1,
                     height: "100%",
                     backgroundColor: Definitions.COMPONENT_BG_COLOR,
                     borderRadius: Definitions.DEFAULT_BORDER_RADIUS,
+                    border: dragging ? "1px solid " + Definitions.SECONDARY_COLOR : "1px solid transparent",
                     alignItems: "center",
                     justifyContent: "center"
                 }}
+                draggable={ true }
+                onDragEnter={ () => setDragging(true) }
+                onDragLeave={ () => setDragging(false) }
+                onDragOver={ event => event.preventDefault() }
+                onDrop={
+                    event => {
+                        const file = event.dataTransfer.files[0];
+
+                        let accept = "";
+                        if(inputProps.accept.includes("video")) accept = "video";
+                        else if(inputProps.accept.includes("image")) accept = "image";
+
+                        if(file.type.includes(accept)) {
+                            setSelectedFile(file);
+                            if(onChange) {
+                                onChange(file);
+                            }
+                        }
+                        setDragging(false);
+                    }
+                }
             >
                 {
                     (selectedFile || (initialInfo && initialInfo.url)) ?
@@ -126,7 +152,8 @@ export default ({ inputId, title, file, initial, inputProps, onChange }) => {
                         <span
                             style={{
                                 color: Definitions.TEXT_COLOR,
-                                fontSize: DEFAULT_SIZES.NORMAL_SIZE
+                                fontSize: DEFAULT_SIZES.NORMAL_SIZE,
+                                pointerEvents: "none"
                             }}
                         >
                             { title.toUpperCase() } 

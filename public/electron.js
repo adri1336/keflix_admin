@@ -6,13 +6,21 @@ const youtubedl = require("youtube-dl");
 const { name, version } = require("../package.json");
 const os = require('os');
 const app_tmpDir = os.tmpdir() + "/" + name;
-const { getVideoDurationInSeconds } = require("get-video-duration");
 
 const path = require("path");
 const isDev = require("electron-is-dev");
 if(!isDev) {
 	youtubedl.setYtdlBinary(
 		youtubedl.getYtdlBinary().replace("app.asar", "app.asar.unpacked")
+	);
+}
+
+const execa = require("execa");
+let ffprobePath = require("@ffprobe-installer/ffprobe").path;
+if(!isDev) {
+	ffprobePath = require("@ffprobe-installer/ffprobe").path.replace(
+		"app.asar",
+		"app.asar.unpacked"
 	);
 }
 
@@ -85,11 +93,19 @@ createWindow = () => {
 		});
 	});
 
-	ipcMain.on("get-video-duration", (event, data) => {
+	ipcMain.on("get-video-duration", async (event, data) => {
 		const videoPath = data.videoPath;
-		getVideoDurationInSeconds(videoPath).then(duration => {
-			event.reply("get-video-duration", duration);
-		});
+		const params = ['-v', 'error', '-show_format', '-show_streams'];
+
+		const { stdout } = await execa(ffprobePath, [...params, videoPath]);
+		const matched = stdout.match(/duration="?(\d*\.\d*)"?/);
+		
+		let duration = 0;
+		if(matched && matched[1]) {
+			duration = parseFloat(matched[1]);
+		}
+		
+		event.reply("get-video-duration", duration);
 	});
 }
 

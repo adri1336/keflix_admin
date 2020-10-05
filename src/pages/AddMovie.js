@@ -985,9 +985,12 @@ export default () => {
                                                 file={ state.formValues.files.video }
                                                 onChange={
                                                     async file => {
-                                                        let duration = await getVideoDurationInSeconds(file.path);
-                                                        duration = Math.round(duration / 60);
-                                                        setState({ ...state, formValues: { ...state.formValues, runtime: duration, files: { ...state.formValues.files, video: file } } });
+                                                        if(file) {
+                                                            let duration = await getVideoDurationInSeconds(file.path);
+                                                            duration = Math.round(duration / 60);
+                                                            setState({ ...state, formValues: { ...state.formValues, runtime: duration, files: { ...state.formValues.files, video: file } } });
+                                                        }
+                                                        else setState({ ...state, formValues: { ...state.formValues, files: { ...state.formValues.files, video: file } } });
                                                     } 
                                                 }
                                             />
