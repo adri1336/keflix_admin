@@ -89,3 +89,13 @@ export const downloadYoutubeVideo = (id, fileName, onProgress) => {
         })
     });
 };
+
+export const getVideoDurationInSeconds = (videoPath) => {
+    return new Promise(resolve => {
+        ipcRenderer.send("get-video-duration", { videoPath: videoPath });
+
+        ipcRenderer.on("get-video-duration", (event, arg) => {
+            resolve(arg);
+        });
+    });
+};

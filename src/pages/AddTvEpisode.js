@@ -10,7 +10,7 @@ import Button from "components/Button";
 import FileSelector from "components/FileSelector";
 import Spinner from "components/Spinner";
 import Modal from "components/Modal";
-import { downloadFile } from "utils/Functions";
+import { downloadFile, getVideoDurationInSeconds } from "utils/Functions";
 import * as TvApi from "api/Tv";
 import ProgressBar from "components/ProgressBar";
 import * as TMDbApi from "api/TMDb";
@@ -28,6 +28,7 @@ export default ({ location }) => {
                 episode: null,
                 name: null,
                 overview: null,
+                runtime: null,
                 files: {
                     backdrop: null,
                     video: null
@@ -447,6 +448,13 @@ export default ({ location }) => {
                                             value={ state.formValues.overview || "" }
                                             onChange={ (event) => setState({ ...state, formValues: { ...state.formValues, overview: event.target.value } }) }
                                         />
+                                        <Input
+                                            title={ t("add_tv_episode.runtime").toUpperCase() }
+                                            type="number"
+                                            inputProps={{ min: 0 }}
+                                            value={ state.formValues.runtime || "" }
+                                            onChange={ (event) => setState({ ...state, formValues: { ...state.formValues, runtime: event.target.value } }) }
+                                        />
                                         <Button
                                             title={ t("add_tv_episode.add_button").toUpperCase() }
                                             type="submit"
@@ -489,7 +497,13 @@ export default ({ location }) => {
                                                 title={ t("add_tv_episode.video") }
                                                 inputProps={{ accept: "video/*,.mkv" }}
                                                 file={ state.formValues.files.video }
-                                                onChange={ file => setState({ ...state, formValues: { ...state.formValues, files: { ...state.formValues.files, video: file } } }) }
+                                                onChange={
+                                                    async file => {
+                                                        let duration = await getVideoDurationInSeconds(file.path);
+                                                        duration = Math.round(duration / 60);
+                                                        setState({ ...state, formValues: { ...state.formValues, runtime: duration, files: { ...state.formValues.files, video: file } } });
+                                                    }
+                                                }
                                             />
                                         </div>
                                     </div>

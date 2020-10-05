@@ -11,7 +11,7 @@ import Checkbox from "components/Checkbox";
 import FileSelector from "components/FileSelector";
 import Spinner from "components/Spinner";
 import Modal from "components/Modal";
-import { makeCancelable, downloadFile, downloadYoutubeVideo } from "utils/Functions";
+import { makeCancelable, downloadFile, downloadYoutubeVideo, getVideoDurationInSeconds } from "utils/Functions";
 import * as GenreApi from "api/Genre";
 import * as MovieApi from "api/Movie";
 import ProgressBar from "components/ProgressBar";
@@ -149,6 +149,7 @@ export default () => {
                 genres: genres,
                 tagline: movie.tagline || "",
                 release_date: movie.release_date || "",
+                runtime: movie.runtime || "",
                 popularity: movie.popularity || "",
                 vote_average: movie.vote_average || "",
                 adult: movie.adult || false,
@@ -852,6 +853,13 @@ export default () => {
                                             value={ state.formValues.release_date || "" }
                                             onChange={ (event) => setState({ ...state, formValues: { ...state.formValues, release_date: event.target.value } }) }
                                         />
+                                        <Input
+                                            title={ t("add_movie.runtime").toUpperCase() }
+                                            type="number"
+                                            inputProps={{ min: 0 }}
+                                            value={ state.formValues.runtime || "" }
+                                            onChange={ (event) => setState({ ...state, formValues: { ...state.formValues, runtime: event.target.value } }) }
+                                        />
                                         <div
                                             style={{
                                                 display: "flex",
@@ -975,7 +983,13 @@ export default () => {
                                                 title={ t("add_movie.video") }
                                                 inputProps={{ accept: "video/*,.mkv" }}
                                                 file={ state.formValues.files.video }
-                                                onChange={ file => setState({ ...state, formValues: { ...state.formValues, files: { ...state.formValues.files, video: file } } }) }
+                                                onChange={
+                                                    async file => {
+                                                        let duration = await getVideoDurationInSeconds(file.path);
+                                                        duration = Math.round(duration / 60);
+                                                        setState({ ...state, formValues: { ...state.formValues, runtime: duration, files: { ...state.formValues.files, video: file } } });
+                                                    } 
+                                                }
                                             />
                                         </div>
                                     </div>

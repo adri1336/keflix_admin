@@ -10,7 +10,7 @@ import Modal from "components/Modal";
 import Alert from "components/Alert";
 import * as MovieApi from "api/Movie";
 import * as GenreApi from "api/Genre";
-import { makeCancelable } from "utils/Functions";
+import { makeCancelable, getVideoDurationInSeconds } from "utils/Functions";
 import Checkbox from "components/Checkbox";
 import Button from "components/Button";
 import TextButton from "components/TextButton";
@@ -435,6 +435,12 @@ export default ({ history, location }) => {
                                 />
                                 <EditableText
                                     style={{ margin: Definitions.DEFAULT_MARGIN }}
+                                    title={ t("movie.runtime") }
+                                    value={ movie.runtime || "" }
+                                    onClick={ () => setState({ ...state, editAlert: { property: "runtime", inputValue: movie.runtime || "", inputProps: { type: "number", min: 0 } } }) }
+                                />
+                                <EditableText
+                                    style={{ margin: Definitions.DEFAULT_MARGIN }}
                                     title={ t("movie.popularity") }
                                     value={ movie.popularity || "" }
                                     onClick={ () => setState({ ...state, editAlert: { property: "popularity", inputValue: movie.popularity || "", inputProps: { type: "number", min: 0, step: "0.001" } } }) }
@@ -601,7 +607,13 @@ export default ({ history, location }) => {
                                             type: "video",
                                             date: state.filesChangedDate
                                         }}
-                                        onChange={ file => setState({ ...state, newFiles: { ...state.newFiles, video: file }, filesChanged: { ...state.filesChanged, video: true } }) }
+                                        onChange={
+                                            async file => {
+                                                let duration = await getVideoDurationInSeconds(file.path);
+                                                duration = Math.round(duration / 60);
+                                                setState({ ...state, movie: { ...movie, runtime: duration }, newFiles: { ...state.newFiles, video: file }, filesChanged: { ...state.filesChanged, video: true } });
+                                            }
+                                        }
                                     />
                                 </div>
                                 {

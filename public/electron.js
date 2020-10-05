@@ -6,6 +6,7 @@ const youtubedl = require("youtube-dl");
 const { name, version } = require("../package.json");
 const os = require('os');
 const app_tmpDir = os.tmpdir() + "/" + name;
+const { getVideoDurationInSeconds } = require("get-video-duration");
 
 const path = require("path");
 const isDev = require("electron-is-dev");
@@ -81,6 +82,13 @@ createWindow = () => {
 
 		video.on("end", () => {
 			event.reply("download-youtube-video", fullPath);
+		});
+	});
+
+	ipcMain.on("get-video-duration", (event, data) => {
+		const videoPath = data.videoPath;
+		getVideoDurationInSeconds(videoPath).then(duration => {
+			event.reply("get-video-duration", duration);
 		});
 	});
 }
