@@ -134,3 +134,17 @@ export const tvEpisodeInfo = async (tmdb, tvId, season, episode) => {
         return null;
     }
 };
+
+export const getTvExternalIds = async (tmdb, id) => {
+    try {
+        const
+            response = await fetch(TMDB_API_URL + "/tv/" + id + "/external_ids?api_key=" + tmdb?.api_key),
+            data = await response.json();
+
+        if(!data) throw new Error("no data");
+        return data;
+    }
+    catch(error) {
+        return null;
+    }
+};

@@ -93,7 +93,11 @@
         "close_button": "Cerrar",
         "update_button": "Actualizar",
         "successful_tmdb_check": "La clave API es válida.",
-        "unsuccessful_tmdb_check": "La clave API no es válida."
+        "unsuccessful_tmdb_check": "La clave API no es válida.",
+        "fanart_title": "Fanart.tv",
+        "fanart_api_key": "Clave API",
+        "fanart_check_button": "Comprobar",
+        "edit_fanart_api_key": "Introduce la nueva clave API:"
     },
     "genres": {
         "title": "Géneros",
@@ -170,7 +174,9 @@
         "original_title_header": "Título original",
         "release_date_header": "Fecha de lanzamiento",
         "popularity_header": "Popularidad",
-        "downloading_title": "Descargando"
+        "downloading_title": "Descargando",
+        "select_logo_title": "Selecciona un logo para la película",
+        "skip_logo_button": "Continuar sin logo"
     },
     "movie": {
         "page_title": "Película",
@@ -266,7 +272,9 @@
         "original_name_header": "Título original",
         "first_air_date_header": "Primera emisión",
         "popularity_header": "Popularidad",
-        "downloading_title": "Descargando"
+        "downloading_title": "Descargando",
+        "select_logo_title": "Selecciona un logo para la serie",
+        "skip_logo_button": "Continuar sin logo"
     },
     "tv": {
         "page_title": "Serie",
