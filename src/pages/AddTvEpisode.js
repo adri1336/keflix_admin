@@ -99,7 +99,7 @@ export default ({ location }) => {
 
             (
                 async () => {
-                    const episode = await TvApi.createEpisode(authContext, tv.id, season, episodeNumber, { name: state.formValues.name, overview: state.formValues.overview });
+                    const episode = await TvApi.createEpisode(authContext, tv.id, season, episodeNumber, { name: state.formValues.name, overview: state.formValues.overview, runtime: state.formValues.runtime || 0 });
                     if(episode) {
                         setState(state => ({ ...state, uploadProgress: { ...state.uploadProgress, createEpisode: 100 } }));
 
