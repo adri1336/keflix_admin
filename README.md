@@ -11,10 +11,8 @@ Puedes solicitar la información de las películas con TMDb API, esto es totalme
 https://developers.themoviedb.org/3/getting-started/introduction
 
 ## Integración con Fanart.TV
-A partir de la versión 1.1.0 se ha añadido soporte para obtener los logos desde Fanart.tv, esto es totalmente gratuito, solicita tu clave API en:
+(*Requiere la API de TMDb*) A partir de la versión 1.1.0 se ha añadido soporte para obtener los logos desde Fanart.tv, esto es totalmente gratuito, solicita tu clave API en:
 https://fanart.tv/get-an-api-key/
-
-**Requiere la API de TMDb**
 
 
 ![Ejemplo de la aplicación funcionando](https://i.imgur.com/FMYPC1fl.png)
